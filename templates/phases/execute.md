@@ -8,6 +8,8 @@ Launch ALL streams in a SINGLE message. All use `model: "opus"`, `isolation: "wo
 
 10-20 parallel agents, each one doing real, substantial work. As many agents as the workplan demands — do not hold back.
 
+**Minimum 3. Target 10-20. The minimum is not the goal — it's the floor.** Read `scoring-rubric.md`: 3 executors scores 6/15, 5-9 scores 10/15, 10+ scores 15/15. Each executor should do SUBSTANTIAL work — a real feature, a real refactor, a real fix — not a one-line patch.
+
 ## Each Agent Gets
 
 - Specific findings with file:line refs from Plan

@@ -56,6 +56,7 @@ Items tagged `[DYNAMIC]` evolve during coherency reviews.
 - **0 findings from explorers = MANDATORY discovery swarm.** Launch 15-20 agents with different lenses. There is ALWAYS work — the question is how hard you looked. Never log "0 findings" without a discovery swarm first.
 - **Execute MUST launch at least 3 parallel agents.** Target 10-20. Each one does real, substantial work in a worktree. A single inline fix is not an Execute phase.
 - Every finding gets an execution agent — no backlogs. Fix ALL findings in the current cycle.
+- **Carry-forward decay**: Findings carried forward >3 ticks auto-escalate to P0 and get a dedicated executor. If still unfixed after 5 ticks → escalate to operator. Carry-forward must trend toward zero.
 - **Reflect tests everything.** Nothing ships without passing the full test suite.
 - **Every bug prevents its class.** Reflect runs `bug-regression-prevention.md` for every bug found.
 - User prompts are interrupts — drop what you are doing to respond.

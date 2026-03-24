@@ -52,7 +52,7 @@ The system learns from this cycle:
 - **CLAUDE.md**: Keep accurate — test counts, architecture, deploy instructions. This is the authoritative project reference.
 - **Auto-memory**: Add learnings from this cycle. Remove stale entries.
 - **Constitution**: Update if procedures changed.
-- **Carry-forward**: Write unfixed findings to `cron/logs/rounds/tick-N-carryforward.json`. These auto-elevate priority at next Plan.
+- **Carry-forward**: Write unfixed findings to `cron/logs/rounds/tick-N-carryforward.json`. These auto-elevate priority at next Plan. **Decay rules**: >3 ticks → P0 + dedicated executor. >5 ticks → escalate to operator. Carry-forward must trend toward zero — a growing backlog is a constitution violation.
 
 ## 4. Ship
 

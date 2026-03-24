@@ -22,6 +22,8 @@ Run in parallel:
 
 Launch 15-20 explorer agents in ONE message. All opus, all parallel, all background.
 
+**Minimum 8. Target 15-20. The minimum is not the goal — it's the floor.** Read `scoring-rubric.md`: 8 explorers scores 10/20, 15+ scores 15/20, 20+ scores 20/20. Aim high.
+
 ### Core Explorers (always run) `[FIXED]`
 
 | Explorer   | Domain         | Key Checks                               |

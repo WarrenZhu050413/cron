@@ -1,0 +1,4 @@
+[2026-03-24 19:37:06] [watchdog] Watchdog started: pane=meta-cron:1.0 check=15m reminder=60m model=opus[1m] max_restarts=3/hr
+[2026-03-24 19:37:06] [watchdog] ALIVE: claude PID=44010 session=37cc82bf-7f7a-4a25-adaf-2660a84c7e1c
+[2026-03-24 19:37:06] [watchdog] REMINDER: 29573257m since last injection, re-injecting
+[2026-03-24 19:37:07] [watchdog] BOOTSTRAP injected (cron_create_reminder.md + constitution.md)
