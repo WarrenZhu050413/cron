@@ -152,3 +152,29 @@ Watchdog: nohup cron/watchdog/cron-watchdog.sh &
 Ask: "Should I begin the first cycle now?"
 
 If yes, read `cron/cron_create_reminder.md` and follow its instructions to schedule via `CronCreate`, then begin the first Plan immediately.
+
+---
+
+## Meta-Cron (optional — for monitoring multiple project crons)
+
+If the operator runs multiple project crons, set up a meta-cron that monitors them all and self-improves the framework.
+
+### Setup
+
+1. The meta-cron lives in `~/claude-cron/cron/` (the framework monitors itself)
+2. Templates are in `~/claude-cron/templates/meta/`
+3. Launch in a dedicated tmux pane (e.g., `meta-cron:1.0`)
+4. Ticks every 10 min (slower than project crons)
+
+### What it does
+
+- **4 meta-explorers**: tick quality scorer, pane health monitor, constitution compliance auditor, framework self-audit
+- **Enforces compliance**: writes fixes directly into project `cron/` files (constitution amendments, missing protocols, config fixes)
+- **Improves the framework**: when both projects have the same issue, fixes the template so future setups are better
+- **Propagates patterns**: good pattern in one project → framework → all projects
+
+### Key difference from project crons
+
+The meta-cron doesn't just remind — it **writes fixes into the monitored projects' cron/ folders and constitutions**. The constitution IS the tick, so writing into it means the agent WILL see the enforcement next cycle.
+
+See `~/claude-cron/templates/meta/` for all meta-cron templates.
