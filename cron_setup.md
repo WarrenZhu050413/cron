@@ -105,7 +105,17 @@ Read `~/claude-cron/templates/protocols/deploy.md.tmpl`. Write project-specific 
 
 Read `~/claude-cron/examples/` for real-world mission.md examples from ChengXing and KaiFeng.
 
-### Step 4: Customize discovery swarm
+### Step 4: Customize REVIEW.md (semantic lint rules)
+
+The scaffold seeded a `REVIEW.md` at the project root. This is the semantic testing layer — rules that require judgment, not just pass/fail. During coherency rounds, 3-8 agents review all recent changes against these rules.
+
+Customize it for your project. Examples:
+- **Interpretability**: Every flagged decision must show its formula, inputs, and data source
+- **Feedback surface**: Every user-facing judgment must have a "this is incorrect" button
+- **Progressive disclosure**: Summary first, drill-down on demand
+- **Domain tone**: Professional, no emoji, domain terminology, data disclaimers
+
+### Step 5: Customize discovery swarm
 
 Review `cron/phases/explorers/discovery-swarm.md`. Customize the 15 agent prompts for this project's codebase, tech stack, and domain.
 

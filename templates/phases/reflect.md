@@ -109,5 +109,11 @@ R5: "If a user tested this right now with 5 queries, what would disappoint them?
 
 These produce **strategic insight**, not code. Feed their findings into the next Plan's carry-forward.
 
+### REVIEW.md Evolution
+- Did semantic review agents find recurring issues? → Tighten the REVIEW.md rule (add examples, sharpen criteria)
+- Did a semantic rule have 0 violations for 3+ coherency rounds? → Either the rule is satisfied (good) or too vague (sharpen it)
+- Are there quality patterns that should become new REVIEW.md rules? → Add them
+- Can any semantic rule be promoted to a deterministic test? (e.g., "interpretability" → contract test that checks Judgment fields exist) → Write the test, keep the semantic rule as a higher bar
+
 ### Hook + Automation Gap Analysis
 Ask: "Is there repeated manual work a hook could automate?"

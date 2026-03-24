@@ -92,7 +92,14 @@ Before each phase, read the relevant .md file rather than invent how to work. If
 | Execute | `phases/execute.md` | Massive parallel execution in worktrees            |
 | Reflect | `phases/reflect.md` | Test + prevent + consolidate + ship                |
 
-**Coherency mode** (every Nth tick): Same 3 phases, but Plan does strategic discovery (research, audit, rotation) and Reflect adds deep self-improvement (rejuvenation agents, constitution review).
+**Coherency mode** (every Nth tick): Same 3 phases, but Plan does strategic discovery (research, audit, rotation, **semantic review via REVIEW.md agents**) and Reflect adds deep self-improvement (rejuvenation agents, constitution review, REVIEW.md evolution).
+
+## Two Testing Layers `[FIXED]`
+
+1. **Deterministic tests** — run every Reflect. vitest/pytest/cargo test. Binary pass/fail. Catch exact regressions.
+2. **Semantic review** (`REVIEW.md`) — run every coherency round. 3-8 agents review all changes since last coherency against semantic rules (interpretability, feedback surfaces, UX quality, tone). Catch quality/intent issues tests can't express.
+
+Both layers are mandatory. Deterministic tests gate every ship. Semantic review gates coherency promotion.
 
 ## Protocols `[DYNAMIC]`
 

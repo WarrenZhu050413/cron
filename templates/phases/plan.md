@@ -103,6 +103,17 @@ If the project uses `user_requirements/` + `test/regression/`:
 - Max 2 rotations per coherency tick (stability)
 - Core explorers (E1-E4) NEVER rotated — only missions sharpened
 
+### Semantic Review (REVIEW.md agents)
+
+Read `REVIEW.md` at the project root. This file contains semantic lint rules — things deterministic tests can't catch (interpretability, UX quality, tone, feedback surfaces, etc.).
+
+1. Count the rules/sections in REVIEW.md → launch 3-8 review agents (1 per section or group)
+2. Each agent gets: its assigned REVIEW.md rules + `git diff HEAD~{N}` (all changes since last coherency round)
+3. Each agent reviews ALL recent changes against its rules and reports violations as `Finding[]`
+4. Findings from semantic review go into Synthesize alongside explorer findings
+
+This is the quality layer that sits above tests. Tests check "does it work?" — semantic review checks "does it work RIGHT?"
+
 ### Trend Analysis
 - Analyze `summary.jsonl` — recurring failures? slow ticks? patterns?
 - Staleness audit of auto-memory

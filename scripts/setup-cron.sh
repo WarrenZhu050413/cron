@@ -53,6 +53,12 @@ chmod +x "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
 cp "$TEMPLATE_DIR/watchdog/on-session-start.sh" "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
 chmod +x "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
 
+# Seed REVIEW.md at project root if it doesn't exist
+if [[ ! -f "$PROJECT_DIR/REVIEW.md" ]]; then
+  cp "$TEMPLATE_DIR/REVIEW.md.tmpl" "$PROJECT_DIR/REVIEW.md"
+  echo "  Seeded REVIEW.md (customize semantic lint rules for your project)"
+fi
+
 # Initialize empty log
 touch "$PROJECT_DIR/cron/logs/summary.jsonl"
 
