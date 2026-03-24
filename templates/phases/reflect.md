@@ -62,8 +62,9 @@ The system learns from this cycle:
 3. **Log this cycle**:
    - Append to `cron/logs/summary.jsonl`:
      ```json
-     {"tick": N, "timestamp": "ISO", "findings": N, "fixed": N, "prevented": N, "deployed": bool, "duration_s": N}
+     {"tick": N, "timestamp": "ISO", "explorers_launched": N, "executors_launched": N, "findings": N, "fixed": N, "prevented": N, "tests_run": true, "deployed": bool, "duration_s": N, "violations": []}
      ```
+     **Required fields**: `explorers_launched`, `executors_launched`, `violations`, and `tests_run` are MANDATORY. Without them, meta-cron compliance scoring is impossible.
    - Write detailed round log to `cron/logs/rounds/tick-NNN.jsonl`
 
 ## 5. Self-Validate
