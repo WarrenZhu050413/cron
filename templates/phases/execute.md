@@ -10,6 +10,8 @@ Launch ALL streams in a SINGLE message. All use `model: "opus"`, `isolation: "wo
 
 **Minimum 3. Target 10-20. The minimum is not the goal — it's the floor.** Read `scoring-rubric.md`: 3 executors scores 6/15, 5-9 scores 10/15, 10+ scores 15/15. Each executor should do SUBSTANTIAL work — a real feature, a real refactor, a real fix — not a one-line patch.
 
+**NO EXCEPTIONS to the minimum.** "Fixes done inline" or "no critical findings" does NOT exempt you from launching 3 agents. If you have fewer than 3 findings, fill remaining slots with: test expansion, code quality improvements, explorer mission sharpening, documentation accuracy, or stress testing. The constitution requires `executors_launched >= 3` — a self-reported violation is still a violation.
+
 ## Each Agent Gets
 
 - Specific findings with file:line refs from Plan
