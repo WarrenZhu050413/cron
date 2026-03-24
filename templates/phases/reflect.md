@@ -66,7 +66,19 @@ The system learns from this cycle:
      ```
    - Write detailed round log to `cron/logs/rounds/tick-NNN.jsonl`
 
-## 5. Escalate
+## 5. Self-Validate
+
+Before logging, check the constitution's self-validation checklist:
+
+1. **Plan launched ≥8 explorers?** (check agent count from this cycle)
+2. **Execute launched ≥3 parallel agents?** (check worktree count)
+3. **Reflect ran full test suite?** (check test output)
+4. **0 findings without discovery swarm?** (if findings=0, swarm must have run)
+5. **Bugs fixed without prevention?** (every fix needs a prevention entry)
+
+Log any violations in `summary.jsonl` as `"violations": [...]`. These carry forward as P0 next tick.
+
+## 6. Escalate
 
 Anything the loop can't fix → escalation queue per `cron/protocols/escalation.md`.
 

@@ -49,16 +49,30 @@ Items tagged `[DYNAMIC]` evolve during coherency reviews.
 
 ## Invariants `[FIXED]`
 
-- The 3-phase loop: **Plan → Execute → Reflect**. Every cycle runs all three. No shortcuts.
+- The 3-phase loop: **Plan → Execute → Reflect**. Every cycle runs all three. No shortcuts. No "health check only" ticks.
 - Each cycle is a **sprint** — equivalent to a day of engineering, compressed via massive parallelism.
 - Ticks are completion checkpoints — ALL agents finish before marking done.
-- **15-20 explorers** launch every Plan (all opus, all parallel). 4 core + rotating. When stuck, launch 20+ — they will find work.
+- **Plan MUST launch at least 8 explorers.** Target 15-20. All opus, all parallel. A tick that launches 0 explorers is a CONSTITUTION VIOLATION.
+- **0 findings from explorers = MANDATORY discovery swarm.** Launch 15-20 agents with different lenses. There is ALWAYS work — the question is how hard you looked. Never log "0 findings" without a discovery swarm first.
+- **Execute MUST launch at least 3 parallel agents.** Target 10-20. Each one does real, substantial work in a worktree. A single inline fix is not an Execute phase.
 - Every finding gets an execution agent — no backlogs. Fix ALL findings in the current cycle.
-- **Reflect tests everything.** Nothing ships without passing the full E2E suite.
+- **Reflect tests everything.** Nothing ships without passing the full test suite.
 - **Every bug prevents its class.** Reflect runs `bug-regression-prevention.md` for every bug found.
 - User prompts are interrupts — drop what you are doing to respond.
 - Pre-commit gates must pass before any commit.
 - Explorer rotation happens every Plan based on last Reflect's results — not just coherency ticks.
+
+## Self-Validation (end of every Reflect) `[FIXED]`
+
+Before logging the tick, check:
+
+1. **Did Plan launch ≥8 explorers?** If not → constitution violation. Log it. Fix next tick.
+2. **Did Execute launch ≥3 parallel agents?** If not → constitution violation.
+3. **Did Reflect run the full test suite?** If not → constitution violation.
+4. **Were 0 findings logged without a discovery swarm?** If yes → constitution violation.
+5. **Were any bugs fixed without prevention?** If yes → constitution violation.
+
+Log violations in `summary.jsonl` as `"violations": ["description"]`. Carry forward as P0 for next tick.
 
 ## Architecture & Environment `[FIXED]`
 
