@@ -103,6 +103,20 @@ Event-triggered procedures in `cron/protocols/`:
 - `escalation.md` — items needing human attention
 - `deploy.md` — deploy pipeline
 
+## Explorer Table `[DYNAMIC]`
+
+Minimum 8 explorers per tick. E1-E4 core (always run) + E5-E8 rotating (based on last Reflect).
+
+| Explorer | Domain | Status |
+|----------|--------|--------|
+| E1 harness | Test harness health, coverage gaps | Core |
+| E2 stress | Stress testing, load, edge cases | Core |
+| E3 codebase | Code quality, dead code, patterns | Core |
+| E4 infra | Build, deploy, CI, hooks, linting | Core |
+| E5-E8 | Rotating — assigned each Plan based on Reflect findings | Rotating |
+
+Update this table during coherency reviews. Retire stale explorers to `_retired/`, create new ones as patterns emerge.
+
 ## What Evolves `[DYNAMIC]`
 
 - **Explorer folders** (`cron/phases/explorers/`) — create new, retire stale, merge overlapping. Rotation every Plan based on last Reflect.
