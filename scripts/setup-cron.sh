@@ -25,6 +25,16 @@ cp "$TEMPLATE_DIR/cron_create_reminder.md"  "$PROJECT_DIR/cron/"
 cp "$TEMPLATE_DIR/explorers/_defaults.md"   "$PROJECT_DIR/cron/phases/explorers/"
 cp "$TEMPLATE_DIR/explorers/discovery-swarm.md"  "$PROJECT_DIR/cron/phases/explorers/"
 
+# Seed explorer mission.md files from templates (agents customize later)
+for edir in e1-harness e2-stress e3-codebase e4-infra; do
+  tmpl="$TEMPLATE_DIR/explorers/$edir/mission.md.tmpl"
+  dest="$PROJECT_DIR/cron/phases/explorers/$edir/mission.md"
+  if [[ -f "$tmpl" && ! -f "$dest" ]]; then
+    cp "$tmpl" "$dest"
+    echo "  Seeded $edir/mission.md from template (customize placeholders)"
+  fi
+done
+
 # Generic phase files
 cp "$TEMPLATE_DIR/phases/plan.md"     "$PROJECT_DIR/cron/phases/"
 cp "$TEMPLATE_DIR/phases/execute.md"  "$PROJECT_DIR/cron/phases/"
