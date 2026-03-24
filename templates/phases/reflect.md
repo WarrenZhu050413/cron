@@ -42,6 +42,8 @@ For every bug — whether found by explorers, test failures, or execution agents
 3. **Write the prevention** — execute, don't plan. Verify it catches the original bug.
 4. **Update explorer** — if no explorer would have caught this, add a check or create a new explorer.
 
+**The `prevented` count in summary.jsonl MUST equal or exceed `fixed`.** Every bug fixed without a prevention is a constitution violation. Even a Level 5 regression test counts — there is no excuse for prevented=0 when fixed>0. If you fixed 5 bugs, you must write 5 preventions (one per bug class).
+
 ## 3. Consolidate
 
 The system learns from this cycle:
