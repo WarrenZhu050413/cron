@@ -15,7 +15,7 @@ REMINDER_INTERVAL="${CRON_REMINDER_INTERVAL:-60}"
 MAX_RESTARTS="${CRON_MAX_RESTARTS_PER_HOUR:-3}"
 MAX_TICK_DURATION="${CRON_MAX_TICK_DURATION:-600}"
 RESTART_DELAY="${CRON_RESTART_DELAY:-10}"
-TICK_FILE="$PROJECT_DIR/cron/cron_tick.md"
+CONSTITUTION_FILE="$PROJECT_DIR/cron/constitution.md"
 SESSION_ID_FILE="$PROJECT_DIR/.claude/cron-session-id"
 LOG_FILE="$PROJECT_DIR/cron/logs/watchdog.log"
 RESTART_LOG="/tmp/$(basename "$PROJECT_DIR")-cron-restarts"
@@ -64,7 +64,7 @@ check_crash_loop() {
 }
 
 inject_bootstrap() {
-  # Build message from cron_create_reminder.md + cron_tick.md
+  # Inject cron_create_reminder.md + constitution.md
   local reminder_file="$PROJECT_DIR/cron/cron_create_reminder.md"
   local tmp
   tmp=$(mktemp)
@@ -72,9 +72,9 @@ inject_bootstrap() {
 <From-Cron-Watchdog>
 $(cat "$reminder_file")
 
-Here is the tick content to schedule (from cron/cron_tick.md):
+Here is the constitution (cron/constitution.md):
 
-$(cat "$TICK_FILE")
+$(cat "$CONSTITUTION_FILE")
 </From-Cron-Watchdog>
 MSGEOF
   tmux load-buffer "$tmp"
@@ -83,7 +83,7 @@ MSGEOF
   sleep 0.5
   tmux send-keys -t "$PANE" Enter
   LAST_REMINDER=$(date +%s)
-  log "BOOTSTRAP injected (cron_create_reminder.md + cron_tick.md)"
+  log "BOOTSTRAP injected (cron_create_reminder.md + constitution.md)"
 }
 
 restart_claude() {

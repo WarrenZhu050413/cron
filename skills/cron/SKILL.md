@@ -12,7 +12,6 @@ metadata:
   priority: 8
   pathPatterns:
     - 'cron/constitution.md'
-    - 'cron/cron_tick.md'
     - 'cron/vision.md'
     - 'cron/phases/**'
     - 'cron/watchdog/**'

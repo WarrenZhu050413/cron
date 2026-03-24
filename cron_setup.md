@@ -65,9 +65,6 @@ Read `~/claude-cron/templates/constitution.md.tmpl`. Generate with:
 - Protocol list (include `bug-regression-prevention.md`)
 - Explorer table
 
-#### `cron/cron_tick.md`
-Read `~/claude-cron/templates/cron_tick.md.tmpl`. Generate with project name + explorer table.
-
 #### `cron/config.json`
 Read `~/claude-cron/templates/config.json.tmpl`. Fill in test commands, deploy config.
 
@@ -141,7 +138,7 @@ Watchdog:   {pane}
 
 Files:
   cron/vision.md        — north star (why)
-  cron/constitution.md  — principles (what)
+  cron/constitution.md  — source of truth (ticked every 5min)
   cron/phases/          — plan.md, execute.md, reflect.md (how)
   cron/phases/explorers/— explorer missions
   cron/protocols/       — event-triggered procedures

@@ -79,7 +79,7 @@ On coherency ticks, Reflect adds these AFTER the normal steps:
 ### Constitution + Protocol Review
 - Re-read `cron/constitution.md` — do principles still apply?
 - Check `cron/protocols/` — are protocols still accurate?
-- Verify `cron_tick.md` matches current reality
+- Verify `cron/constitution.md` is current and accurate
 - **CLAUDE.md deep check**: Not just counts — verify architecture description, deploy instructions, conventions are all current.
 
 ### Rejuvenation Agents (5 agents, parallel)
