@@ -39,18 +39,17 @@ retrieval:
 
 # Autonomous Improvement Loop (claude-cron)
 
-A reusable framework for continuous, autonomous codebase improvement. 5-phase cycle: Explore → Synthesize → Execute → Reflect → Complete.
+3-phase sprint cycle: **Plan** (massive parallel discovery) → **Execute** (massive parallel fixes) → **Reflect** (test, prevent, consolidate, ship). Each cycle is a sprint compressed via LLM parallelism.
 
 ## Setup (new project)
 
-Read `~/claude-cron/cron_setup.md` and follow its 5-phase instructions to set up a cron loop in the current project.
+Read `~/claude-cron/cron_setup.md` and follow its instructions to set up a cron loop in the current project. Or use the `/cron-setup` command.
 
 ## Management (existing loop)
 
 - **Start the loop**: Read `cron/cron_create_reminder.md`, schedule with `CronCreate`
-- **Explorer rotation**: Read `cron/phases/phase1-explore/phase1-explore.md`, follow rotation protocol
+- **Explorer rotation**: Happens every Plan based on last Reflect's results. Read `cron/phases/plan.md`.
 - **Watchdog install**: Run `bash ~/claude-cron/scripts/install-watchdog.sh`
-- **Coherency review**: Read `cron/phases/coherency-review/coherency-review.md`
 - **Bug prevention**: Follow `cron/protocols/bug-regression-prevention.md` — every bug must prevent its class
 
 ## Key Principles

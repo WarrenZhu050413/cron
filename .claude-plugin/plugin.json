@@ -1,0 +1,7 @@
+{
+  "name": "claude-cron",
+  "description": "Autonomous improvement loop for any repository. 3-phase cycle: Plan (massive parallel discovery) → Execute (massive parallel fixes) → Reflect (test, prevent, consolidate, ship). Each cycle is a sprint compressed via LLM parallelism.",
+  "author": {
+    "name": "Warren Zhu"
+  }
+}

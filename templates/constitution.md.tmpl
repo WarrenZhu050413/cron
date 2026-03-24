@@ -49,14 +49,16 @@ Items tagged `[DYNAMIC]` evolve during coherency reviews.
 
 ## Invariants `[FIXED]`
 
-- The 5-phase structure (Explore → Synthesize → Execute → Reflect → Complete)
+- The 3-phase loop: **Plan → Execute → Reflect**. Every cycle runs all three. No shortcuts.
+- Each cycle is a **sprint** — equivalent to a day of engineering, compressed via massive parallelism.
 - Ticks are completion checkpoints — ALL agents finish before marking done.
-- **8 focused explorers** launch every tick (E1-E8), all using **opus model**. When stuck, launch 20 — they will find work.
-- **Bias toward execution**: 80% fixing, 20% exploring.
-- Every finding gets an execution agent — no backlogs. Fix ALL findings in the current tick.
-- **No shortcut ticks.** Every tick runs the full 5-phase cycle. Do not skip explorers.
+- **15-20 explorers** launch every Plan (all opus, all parallel). 4 core + rotating. When stuck, launch 20+ — they will find work.
+- Every finding gets an execution agent — no backlogs. Fix ALL findings in the current cycle.
+- **Reflect tests everything.** Nothing ships without passing the full E2E suite.
+- **Every bug prevents its class.** Reflect runs `bug-regression-prevention.md` for every bug found.
 - User prompts are interrupts — drop what you are doing to respond.
 - Pre-commit gates must pass before any commit.
+- Explorer rotation happens every Plan based on last Reflect's results — not just coherency ticks.
 
 ## Architecture & Environment `[FIXED]`
 
@@ -70,14 +72,13 @@ Architecture, conventions, and domain requirements live in `CLAUDE.md` — the a
 
 Before each phase, read the relevant .md file rather than invent how to work. If you don't like the content, or think it needs to evolve, you can change it. But read it first to understand the precedent.
 
-| #   | Name             | File                                                       | Purpose                          |
-| --- | ---------------- | ---------------------------------------------------------- | -------------------------------- |
-| 1   | Explore          | `phases/phase1-explore/phase1-explore.md`                  | Context + surface all problems   |
-| 2   | Synthesize       | `phases/phase2-synthesis/phase2-synthesis.md`               | Findings → execution batches     |
-| 3   | Execute          | `phases/phase3-execution/phase3-execution.md`               | Fix everything found             |
-| 4   | Reflect          | `phases/phase4-reflect/phase4-reflect.md`                   | Prevention + system optimization |
-| 5   | Complete         | `phases/phase5-complete/phase5-complete.md`                 | Verify, ship, record             |
-| Alt | Coherency Review | `phases/coherency-review/coherency-review.md`               | Every Nth tick, replaces 1-3     |
+| Phase   | File                | Purpose                                            |
+| ------- | ------------------- | -------------------------------------------------- |
+| Plan    | `phases/plan.md`    | Context + massive parallel discovery + workplan    |
+| Execute | `phases/execute.md` | Massive parallel execution in worktrees            |
+| Reflect | `phases/reflect.md` | Test + prevent + consolidate + ship                |
+
+**Coherency mode** (every Nth tick): Same 3 phases, but Plan does strategic discovery (research, audit, rotation) and Reflect adds deep self-improvement (rejuvenation agents, constitution review).
 
 ## Protocols `[DYNAMIC]`
 
@@ -90,7 +91,7 @@ Event-triggered procedures in `cron/protocols/`:
 
 ## What Evolves `[DYNAMIC]`
 
-- **Explorer folders** (`cron/phases/phase1-explore/explorers/`) — create new, retire stale, merge overlapping
+- **Explorer folders** (`cron/phases/explorers/`) — create new, retire stale, merge overlapping. Rotation every Plan based on last Reflect.
 - **Explorer prompts** (`*/mission.md`) — rewrite based on findings and fixes
 - **Protocols** (`cron/protocols/`) — update as tooling/architecture changes
 - **Pre-commit gate composition** — add/remove gates as tooling improves

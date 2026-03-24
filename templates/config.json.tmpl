@@ -3,23 +3,20 @@
   "coherency_review_every": 4,
   "model": "opus[1m]",
   "phases": {
-    "explore": {
-      "explorer_dir": "cron/phases/phase1-explore/explorers/",
+    "plan": {
+      "explorer_dir": "cron/phases/explorers/",
       "output_format": "Finding[]",
       "proceed_when_pct": 80,
-      "default_explorers": 8,
+      "min_explorers": 8,
+      "default_explorers": 15,
       "swarm_threshold": 3,
-      "swarm_size": 15
-    },
-    "synthesize": {
-      "priority_order": ["p0", "p1", "p2", "p3"],
-      "max_streams": "unlimited"
+      "swarm_size": 20
     },
     "execute": {
       "isolation": "worktree",
       "model": "opus[1m]"
     },
-    "complete": {
+    "reflect": {
       "test_suites": ["{{TEST_COMMANDS}}"],
       "auto_deploy": false,
       "auto_promote_on_coherency": true,
@@ -30,6 +27,7 @@
     "min_commits_per_tick": 1,
     "ticks_without_findings_trigger_swarm": 3,
     "carry_forward_priority_elevation": true,
-    "green_means_too_narrow": true
+    "green_means_too_narrow": true,
+    "feature_finding_agents_when_stuck": 10
   }
 }

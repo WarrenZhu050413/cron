@@ -16,26 +16,24 @@ fi
 
 echo "Creating cron/ structure at $PROJECT_DIR/cron/"
 
-# Directory structure
-mkdir -p "$PROJECT_DIR/cron"/{phases/phase1-explore/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},phases/{phase2-synthesis,phase3-execution,phase4-reflect,phase5-complete,coherency-review},protocols,watchdog,logs/rounds}
+# Directory structure — 3 phases: plan, execute, reflect
+mkdir -p "$PROJECT_DIR/cron"/{phases/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},protocols,watchdog,logs/rounds}
 
 # Copy 100% generic files verbatim
 cp "$TEMPLATE_DIR/finding-schema.ts"        "$PROJECT_DIR/cron/"
 cp "$TEMPLATE_DIR/cron_create_reminder.md"  "$PROJECT_DIR/cron/"
-cp "$TEMPLATE_DIR/explorers/_defaults.md"   "$PROJECT_DIR/cron/phases/phase1-explore/explorers/"
+cp "$TEMPLATE_DIR/explorers/_defaults.md"   "$PROJECT_DIR/cron/phases/explorers/"
+cp "$TEMPLATE_DIR/explorers/discovery-swarm.md"  "$PROJECT_DIR/cron/phases/explorers/"
 
 # Generic phase files
-cp "$TEMPLATE_DIR/phases/phase2-synthesize.md"  "$PROJECT_DIR/cron/phases/phase2-synthesis/phase2-synthesis.md"
-cp "$TEMPLATE_DIR/phases/phase3-execute.md"     "$PROJECT_DIR/cron/phases/phase3-execution/phase3-execution.md"
-cp "$TEMPLATE_DIR/phases/phase4-reflect.md"     "$PROJECT_DIR/cron/phases/phase4-reflect/phase4-reflect.md"
-cp "$TEMPLATE_DIR/phases/coherency-review.md"   "$PROJECT_DIR/cron/phases/coherency-review/coherency-review.md"
+cp "$TEMPLATE_DIR/phases/plan.md"     "$PROJECT_DIR/cron/phases/"
+cp "$TEMPLATE_DIR/phases/execute.md"  "$PROJECT_DIR/cron/phases/"
+cp "$TEMPLATE_DIR/phases/reflect.md"  "$PROJECT_DIR/cron/phases/"
 
 # Generic protocols
-cp "$TEMPLATE_DIR/protocols/user-prompt-reaction.md"  "$PROJECT_DIR/cron/protocols/"
-cp "$TEMPLATE_DIR/protocols/escalation.md"            "$PROJECT_DIR/cron/protocols/"
-
-# Discovery swarm template
-cp "$TEMPLATE_DIR/explorers/discovery-swarm.md"  "$PROJECT_DIR/cron/phases/phase1-explore/explorers/"
+cp "$TEMPLATE_DIR/protocols/user-prompt-reaction.md"       "$PROJECT_DIR/cron/protocols/"
+cp "$TEMPLATE_DIR/protocols/escalation.md"                 "$PROJECT_DIR/cron/protocols/"
+cp "$TEMPLATE_DIR/protocols/bug-regression-prevention.md"  "$PROJECT_DIR/cron/protocols/"
 
 # Watchdog scripts
 cp "$TEMPLATE_DIR/../scripts/watchdog.sh"  "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
