@@ -62,17 +62,14 @@ SETTINGS_FILE="$SETTINGS_DIR/settings.local.json"
 mkdir -p "$SETTINGS_DIR"
 
 SESSION_START_HOOK="$CRON_DIR/watchdog/on-session-start.sh"
-STOP_HOOK="$CRON_DIR/watchdog/on-stop-tick.sh"
 
 if [[ -f "$SETTINGS_FILE" ]]; then
-  # Check if hooks already configured
   if grep -q "on-session-start.sh" "$SETTINGS_FILE" 2>/dev/null; then
     echo "✓ SessionStart hook already in $SETTINGS_FILE"
   else
-    echo "⚠ $SETTINGS_FILE exists — please add hooks manually:"
+    echo "⚠ $SETTINGS_FILE exists — please add hook manually:"
     echo '  "hooks": {'
-    echo '    "SessionStart": [{"type": "command", "command": "'"$SESSION_START_HOOK"'"}],'
-    echo '    "Stop": [{"type": "command", "command": "'"$STOP_HOOK"'"}]'
+    echo '    "SessionStart": [{"type": "command", "command": "'"$SESSION_START_HOOK"'"}]'
     echo '  }'
   fi
 else
@@ -84,17 +81,11 @@ else
         "type": "command",
         "command": "$SESSION_START_HOOK"
       }
-    ],
-    "Stop": [
-      {
-        "type": "command",
-        "command": "$STOP_HOOK"
-      }
     ]
   }
 }
 EOF
-  echo "✓ Created $SETTINGS_FILE with SessionStart + Stop hooks"
+  echo "✓ Created $SETTINGS_FILE with SessionStart hook"
 fi
 
 # --- Step 4: Offer persistent daemon installation ---

@@ -39,11 +39,9 @@ cp "$TEMPLATE_DIR/protocols/bug-regression-prevention.md"  "$PROJECT_DIR/cron/pr
 cp "$TEMPLATE_DIR/../scripts/watchdog.sh"  "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
 chmod +x "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
 
-# Watchdog hooks
-for hook in on-session-start.sh on-stop-tick.sh; do
-  cp "$TEMPLATE_DIR/watchdog/$hook" "$PROJECT_DIR/cron/watchdog/$hook"
-  chmod +x "$PROJECT_DIR/cron/watchdog/$hook"
-done
+# Watchdog hook
+cp "$TEMPLATE_DIR/watchdog/on-session-start.sh" "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
+chmod +x "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
 
 # Initialize empty log
 touch "$PROJECT_DIR/cron/logs/summary.jsonl"

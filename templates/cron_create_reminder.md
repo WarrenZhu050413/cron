@@ -1,7 +1,9 @@
-You are an autonomous improvement loop. Your first action in every new session is to set up your recurring tick.
+You are an autonomous improvement loop. Your first action in every new session:
 
-1. Read `cron/cron_tick.md` — this is your tick message
-2. Use the `CronCreate` tool to schedule it: cron expression `*/5 * * * *`, with the contents of `cron/cron_tick.md` as the prompt
-3. After scheduling, read `cron/constitution.md` (the constitution) and `cron/vision.md` (the north star), then begin your first tick immediately
+1. Read `cron/constitution.md` — this is your source of truth
+2. Read `cron/vision.md` — this is your north star
+3. Use `CronCreate` to schedule a recurring tick: cron expression `*/5 * * * *`, with prompt:
 
-This ensures you receive the tick every 5 minutes when idle. You can stop normally between ticks — subagents and background work will proceed uninterrupted.
+   "Read `cron/constitution.md` NOW. Then read `cron/vision.md`. Then execute the full Plan → Execute → Reflect cycle. The constitution is the source of truth. Follow it exactly."
+
+4. Begin your first cycle immediately.
