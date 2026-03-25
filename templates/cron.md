@@ -80,6 +80,20 @@ User prompts are the highest-priority signal. When the user speaks mid-sprint:
 
 **Mid-sprint additions**: New deliverables from user input go into the current sprint's `deliverables/` directory. They skip negotiate (the user is the authority) and enter the generate→verify loop immediately.
 
+## Common Requirements (inlined — apply to ALL deliverables)
+
+These are checked in negotiate (plan review), generate (executors follow them), and verify (verifiers enforce them). Violations block the round.
+
+**UI**: Follow existing design system (CSS variables, tokens, components). No inline styles. Support dark mode. Use shared components—don't reinvent. Reference `frontend-design` skill for new UI. Match existing spacing patterns.
+
+**Security**: Verify ownership on data routes (not just auth). Strip sensitive fields from responses. Paginate lists (cap 200–500). Sanitize errors—never leak internals. Rate-limit LLM endpoints. Fail-closed on missing permissions. Parameterize all SQL. Whitelist fields for external API calls.
+
+**Code**: Zero mock/placeholder data. No hardcoded IDs. Search for existing patterns first. Prefer editing over creating files. Keep solutions minimal. Follow commit conventions.
+
+**Testing**: New features need regression tests. Bug fixes need a catching test. Real fixtures, not mocks. Test count never decreases (ratchet). Regression tests map 1:1 to requirements.
+
+**Data**: Use canonical database (not legacy). Don't duplicate authoritative external data. Scope all queries by permissions. Cache with TTL, not indefinitely.
+
 ---
 
 ## STEP 0: Read State
@@ -148,6 +162,7 @@ Verify plan quality. Tighten weak criteria. Loop until clean.
 | Ambitious | Just bug fixes | Features + quality | Transformative |
 | Independent | Shared files | Own scope | Zero overlap |
 | Serves goals | Unrelated | Advances goals | Directly fulfills a goal |
+| Common requirements | Deliverable would violate common reqs | Consistent with all common reqs | Explicitly addresses common req gaps |
 
 3. Collect sub-agent reviews. Fix failures. Re-launch reviewers. Loop until all pass.
 4. Write `cron/contracts/sprint-{N}/contract.json`:
@@ -171,7 +186,7 @@ Build deliverables. Use an **agent team** for coordinated execution.
      {
        name: "executor-{id}",
        prompt: "Your deliverable: {JSON}.
-         Read cron/common-requirements.md.
+         Follow the Common Requirements (UI, security, code, testing, data) from cron/cron.md.
          Implement. Commit after each change.
          Build check: BUN_CONFIG_NO_CACHE=1 bun build src/server-web.ts --outdir /tmp/check --target bun
          Write report to cron/contracts/sprint-{N}/round-{M}/executor/{id}.json:
@@ -206,14 +221,18 @@ Agent(run_in_background: true,
   prompt: "Deliverable: {JSON}. Read executor report.
     TEST LIVE—run commands, check behavior, not just code.
     Score against calibration. File bugs with file:line if <pass.
+    Check Common Requirements compliance (UI, security, code, testing, data from cron/cron.md).
+    Common requirement violations are automatic FAILs.
     Assess qualitatively—how does it FEEL?
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}.json:
-    {score, calibration_match, evidence, live_test, bugs, qualitative}")
+    {score, calibration_match, common_reqs_pass, evidence, live_test, bugs, qualitative}")
 ```
 
-**Step 2**: Run security sweep—read `cron/security-sweep.md`, execute all 8 checks.
+**Step 2**: Check **common requirements** — for each deliverable that touched UI, security, code, tests, or data, verify compliance with the Common Requirements section above. Common requirement violations are scored as FAIL on the deliverable.
 
-**Step 3**: Write `cron/contracts/sprint-{N}/round-{M}/_summary.json`:
+**Step 3**: Run security sweep—read `cron/security-sweep.md`, execute all 8 checks.
+
+**Step 4**: Write `cron/contracts/sprint-{N}/round-{M}/_summary.json`:
 ```json
 {
   "sprint": 1, "round": 2,
