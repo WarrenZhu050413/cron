@@ -21,9 +21,9 @@ Also check directional verifiers (thresholds that must not regress):
 
 **If any general verifier FAILS**: set mode="generate", DO NOT increment round. The failure is a P0 bug — generator must fix it before anything else.
 
-## 2. Run Tick Verifiers (from tick-contract.md)
+## 2. Run Tick Verifiers (from tick-contract)
 
-Read `cron/tick-contract.md`, find the `Tick Verifiers` section. Run each command. Score 0-10:
+Read `cron/contracts/sprint-{N}/tick-contract`, find the `Tick Verifiers` section. Run each command. Score 0-10:
 
 | Score | Meaning |
 |-------|---------|
@@ -43,7 +43,7 @@ Beyond the explicit verifiers, ask: "What SHOULD work that nobody specified?"
 
 ## 4. Write Verify Report
 
-Write `cron/verify-report.md`:
+Write `cron/contracts/sprint-{N}/round-{M}-verify-report`:
 ```json
 {
   "sprint": N, "round": M,

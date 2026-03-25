@@ -19,7 +19,7 @@ Launch 15-20 explorer agents. All opus, all parallel. Find problems, opportuniti
 
 ## 3. Write Tick Contract
 
-Write `cron/tick-contract.md`:
+Write `cron/contracts/sprint-{N}/tick-contract`:
 
 **Rules for writing good contracts:**
 - Specify WHAT to deliver, never HOW to implement

@@ -4,8 +4,8 @@ Launch sub-agents to build. You are the orchestrator — you dispatch, you don't
 
 ## 1. Read Context
 
-- `cron/tick-contract.md` — deliverables + verifiers (WHAT to build)
-- `cron/verify-report.md` — if round >1, read failures from last verification
+- `cron/contracts/sprint-{N}/tick-contract` — deliverables + verifiers (WHAT to build)
+- `cron/contracts/sprint-{N}/round-{M}-verify-report` — if round >1, read failures from last verification
 - `cron/state.json` — current sprint/round
 
 ## 2. Launch Sub-Agents
