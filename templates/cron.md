@@ -94,14 +94,16 @@ These are checked in negotiate (plan review), generate (executors follow them), 
 
 **Data**: Use canonical database (not legacy). Don't duplicate authoritative external data. Scope all queries by permissions. Cache with TTL, not indefinitely.
 
-**Verification**: All verification must follow this exact sequence — no shortcuts:
-1. **Deploy** to your test slot: `bash .claude/scripts/worker/deploy-to-slot.sh --service static` (or the project's deploy command)
-2. **Get an authenticated session**: `bash .claude/scripts/autologin.sh staff` (or the project's SSO/auth mechanism) — use real tokens, never hardcoded
-3. **Open the live app in Playwright**: navigate to the test server URL with the auth token
-4. **Click through every flow you changed**: open pages, fill forms, submit, verify responses, check dark mode, check error states
-5. **Screenshot evidence**: take screenshots of key states as proof
+**Verification**: Three layers, in order — no shortcuts:
+1. **Deploy** to a test environment (staging server, test slot, preview deploy). Never verify against localhost alone.
+2. **API verification** — curl/fetch against the deployed test server with real auth tokens. Check endpoints return correct data, auth enforced, error cases handled.
+3. **Browser E2E** — Playwright against the deployed test server. Log in with a real identity (SSO, autologin, real user credentials — not demo accounts or bypassed auth). Before testing:
+   - **List every endpoint** your deliverables changed or added
+   - **List every page/button/form** your deliverables affected
+   - **Write the test plan** — which URLs to visit, which buttons to click, which forms to fill, which responses to check
+   Then execute the plan: navigate to each URL, click every listed button, fill every form, verify every response. Capture screenshots at each step. If anything doesn't work as expected, it's a bug — the deliverable fails.
 
-Never verify against localhost alone. Never verify by just reading code or running unit tests. If the project has no test server or deploy mechanism, flag this as a **Sprint 1 P0 blocker**. Verifiers that skip browser testing are not verifying.
+Reading code is not verification. Unit tests are not verification. Localhost is not verification. If the project has no test environment, that is a **Sprint 1 P0 blocker**.
 
 ---
 
@@ -229,18 +231,29 @@ Agent(run_in_background: true,
 # Per-deliverable (one each, all parallel)
 Agent(run_in_background: true,
   prompt: "Deliverable: {JSON}. Read executor report.
-    TEST LIVE IN A REAL BROWSER using Playwright. Deploy to the test server first if available.
-    Open the actual app, navigate to the affected pages, click through the flows.
-    Do NOT just read code or run unit tests—you must verify real browser behavior.
-    Score against calibration: the target is HIGH_PASS, not just pass.
-    If ANY bugs exist, the deliverable FAILS regardless of score—list them all.
-    Check Common Requirements compliance (UI, security, code, testing, data from cron/cron.md).
-    Common requirement violations are automatic FAILs.
-    Assess qualitatively—how does it FEEL in the browser?
+
+    STEP 1 — BUILD TEST PLAN:
+    List every endpoint changed/added. List every page, button, form affected.
+    Write the exact URLs to visit, buttons to click, forms to fill, responses to check.
+
+    STEP 2 — DEPLOY + API CHECK:
+    Deploy to test environment. Curl every listed endpoint with real auth tokens.
+    Verify correct responses, auth enforcement, error handling.
+
+    STEP 3 — BROWSER E2E:
+    Open Playwright. Log in with real identity (not demo accounts).
+    Execute the test plan: visit each URL, click each button, fill each form.
+    Screenshot at each step. Check dark mode. Check error states.
+
+    STEP 4 — SCORE:
+    Target is HIGH_PASS. Any bug = FAIL regardless of score.
+    Check Common Requirements (UI, security, code, testing, data from cron/cron.md).
+    Common requirement violations = automatic FAIL.
+
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}.json:
-    {score, calibration_match, common_reqs_pass, bugs, evidence, live_test, e2e_browser_tested, qualitative}
-    A deliverable with bugs=[] and calibration_match=high_pass is the ONLY way to pass.
-    If no test server exists, note this as a blocker.")
+    {score, calibration_match, common_reqs_pass, test_plan, endpoints_tested,
+     pages_tested, bugs, evidence, screenshots, e2e_browser_tested, qualitative}
+    bugs=[] AND calibration_match=high_pass is the ONLY way to pass.")
 ```
 
 **Step 2**: Check **common requirements** — for each deliverable that touched UI, security, code, tests, or data, verify compliance with the Common Requirements section above. Common requirement violations are scored as FAIL on the deliverable.

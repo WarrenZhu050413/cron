@@ -47,13 +47,12 @@
 - All queries must be scoped by user permissions (no unscoped SELECT *)
 - Cache with TTL, not indefinitely—stale data is a bug
 
-## Verification (mandatory sequence — no shortcuts)
+## Verification (mandatory — performed by verifier sub-agents, not the main agent)
 
-Every verify round must follow this exact sequence:
-1. **Deploy** to test slot or test server — use the project's deploy command (e.g., `bash .claude/scripts/worker/deploy-to-slot.sh --service static`)
-2. **Authenticate** with real SSO/auth tokens — use the project's autologin (e.g., `bash .claude/scripts/autologin.sh staff`). Never hardcode tokens or use demo accounts.
-3. **Open a real browser** via Playwright — navigate to the deployed test URL with the auth token
-4. **Click through every changed flow** — open affected pages, fill forms, submit, check responses, verify dark mode, check error states
-5. **Screenshot evidence** — capture key states as proof of verification
+Verifier sub-agents execute this sequence for each deliverable:
+1. **Test plan** — list every endpoint changed, every page/button/form affected, exact URLs/clicks/inputs to check
+2. **Deploy** to test environment (staging, test slot, preview)
+3. **API check** — curl every listed endpoint with real auth tokens. Verify responses, auth, errors.
+4. **Browser E2E** — Playwright against deployed test server. Log in with real identity (SSO, not demo accounts). Execute the test plan: visit each URL, click each button, fill each form. Screenshot at each step. Check dark mode and error states.
 
-Reading code or running unit tests alone is NOT verification. Localhost-only testing is NOT verification. If the project has no test server, this is a Sprint 1 P0 blocker — get one before doing anything else.
+Reading code is not verification. Unit tests are not verification. Localhost is not verification. The main agent does not self-verify — independent verifier sub-agents do. No test environment = Sprint 1 P0 blocker.
