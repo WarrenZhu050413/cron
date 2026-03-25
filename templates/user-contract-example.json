@@ -4,75 +4,49 @@
     "Who it serves and why it matters"
   ],
   "journeys": [
-    "User does X → system responds with Y (end-to-end flow that must never break)",
+    "User does X → system responds with Y",
     "Admin does A → data updates correctly"
   ],
-  "technical_quality_bar": [
+  "quality_bar": [
     {
       "criterion": "All tests pass",
       "calibration": {"fail": "any failure", "pass": "0 failures", "high_pass": "0 failures + count increased"}
     },
     {
       "criterion": "No type errors",
-      "calibration": {"fail": "type checker reports errors", "pass": "clean", "high_pass": "clean + strict mode"}
+      "calibration": {"fail": "type checker errors", "pass": "clean", "high_pass": "clean + strict mode"}
     },
     {
       "criterion": "Production healthy",
       "calibration": {"fail": "health endpoint non-200", "pass": "200 OK", "high_pass": "200 + all endpoints + <500ms"}
     },
     {
-      "criterion": "Pre-commit gates exist and pass",
-      "calibration": {"fail": "no pre-commit hooks", "pass": "hooks exist + pass", "high_pass": "6-layer gates (secret scan, lint, types, build, tests, ratchets)"}
-    }
-  ],
-  "product_quality_bar": [
-    {
-      "criterion": "Every output is interpretable (shows reasoning, not just result)",
-      "calibration": {"fail": "black box output", "pass": "shows formula + inputs", "high_pass": "full trace + drill-down + confidence indicator"}
-    },
-    {
-      "criterion": "Follows existing design system",
-      "calibration": {"fail": "inline styles or new UI framework", "pass": "uses design tokens + existing components", "high_pass": "visually indistinguishable from existing modules"}
-    },
-    {
-      "criterion": "Professional tone, no casual language",
-      "calibration": {"fail": "emoji or slang", "pass": "professional + domain terminology", "high_pass": "indistinguishable from domain expert"}
-    }
-  ],
-  "security_quality_bar": [
-    {
       "criterion": "No hardcoded secrets in source",
-      "calibration": {"fail": "API key or password in .ts/.js/.py", "pass": "all secrets in env vars", "high_pass": "secret scan in pre-commit + CI"}
+      "calibration": {"fail": "API key in source", "pass": "all in env vars", "high_pass": "env vars + secret scan in pre-commit"}
     },
     {
       "criterion": "All routes authenticated",
-      "calibration": {"fail": "data endpoint without auth", "pass": "auth middleware on all non-public routes", "high_pass": "auth + ownership verification + rate limiting"}
+      "calibration": {"fail": "data endpoint without auth", "pass": "auth on all non-public", "high_pass": "auth + ownership + rate limiting"}
     },
     {
       "criterion": "No SQL injection surface",
-      "calibration": {"fail": "template literals in SQL", "pass": "all queries parameterized", "high_pass": "parameterized + ORM/query builder"}
+      "calibration": {"fail": "template literals in SQL", "pass": "parameterized", "high_pass": "parameterized + ORM"}
     },
     {
-      "criterion": "Error messages sanitized",
-      "calibration": {"fail": "stack traces sent to client", "pass": "generic error messages", "high_pass": "error codes + logging + no internal info leaked"}
-    }
-  ],
-  "code_quality_bar": [
-    {
-      "criterion": "No mock/placeholder data in production",
-      "calibration": {"fail": "hardcoded IDs or fake data", "pass": "all data dynamic", "high_pass": "data validation at boundaries"}
+      "criterion": "Every output interpretable",
+      "calibration": {"fail": "black box output", "pass": "shows formula + inputs", "high_pass": "full trace + drill-down"}
     },
     {
-      "criterion": "Test count ratchet (never decreases)",
-      "calibration": {"fail": "test count decreased", "pass": "same or higher", "high_pass": "increased + covers new code"}
+      "criterion": "Follows existing design system",
+      "calibration": {"fail": "inline styles", "pass": "design tokens + components", "high_pass": "visually indistinguishable from existing"}
     },
     {
       "criterion": "Bug fixes include regression tests",
-      "calibration": {"fail": "fix without test", "pass": "test that catches the bug", "high_pass": "test + lint rule that prevents the class"}
+      "calibration": {"fail": "fix without test", "pass": "test catches the bug", "high_pass": "test + lint rule prevents the class"}
     },
     {
-      "criterion": "Layer boundaries enforced",
-      "calibration": {"fail": "DB calls in route handlers", "pass": "separated layers", "high_pass": "lint rules preventing cross-layer imports"}
+      "criterion": "Test count never decreases",
+      "calibration": {"fail": "count decreased", "pass": "same or higher", "high_pass": "increased + covers new code"}
     }
   ]
 }
