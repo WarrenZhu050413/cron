@@ -213,19 +213,22 @@ Score deliverables. Run security sweep. Loop on failure.
 # User contract check
 Agent(run_in_background: true,
   prompt: "Read cron/contracts/user-contract.json. Score ALL quality bar criteria.
-    Be STRICT—if it doesn't match the calibration 'pass' example, it's not a pass.
+    Be STRICT—the bar is high_pass, not just pass. If ANY bug exists, it's not done.
+    A deliverable with known issues cannot pass regardless of score.
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/_general.json")
 
 # Per-deliverable (one each, all parallel)
 Agent(run_in_background: true,
   prompt: "Deliverable: {JSON}. Read executor report.
     TEST LIVE—run commands, check behavior, not just code.
-    Score against calibration. File bugs with file:line if <pass.
+    Score against calibration: the target is HIGH_PASS, not just pass.
+    If ANY bugs exist, the deliverable FAILS regardless of score—list them all.
     Check Common Requirements compliance (UI, security, code, testing, data from cron/cron.md).
     Common requirement violations are automatic FAILs.
     Assess qualitatively—how does it FEEL?
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}.json:
-    {score, calibration_match, common_reqs_pass, evidence, live_test, bugs, qualitative}")
+    {score, calibration_match, common_reqs_pass, bugs, evidence, live_test, qualitative}
+    A deliverable with bugs=[] and calibration_match=high_pass is the ONLY way to pass.")
 ```
 
 **Step 2**: Check **common requirements** — for each deliverable that touched UI, security, code, tests, or data, verify compliance with the Common Requirements section above. Common requirement violations are scored as FAIL on the deliverable.
@@ -236,16 +239,25 @@ Agent(run_in_background: true,
 ```json
 {
   "sprint": 1, "round": 2,
-  "scores": {"auth-fix": 8, "dark-mode": 3},
-  "all_pass": false,
+  "scores": {"auth-fix": 9, "dark-mode": 6},
+  "all_high_pass": false,
   "failed": ["dark-mode"],
+  "open_bugs": ["dark-mode: 100 lines dead CSS", "dark-mode: broken on mobile"],
   "security_sweep": "PASS",
   "quality_bar": {"technical": "pass", "product": "pass"}
 }
 ```
 
-**Gate**: `all_pass: true` AND `security_sweep: "PASS"` → set `mode: "reflect"`.
-Otherwise → set `mode: "generate", round: M+1`. **This loop is mandatory. You cannot reach reflect with failures.**
+**Gate — HIGH STANDARD**: The round passes ONLY when:
+1. Every deliverable scores **high_pass** (not just pass)
+2. **Zero open bugs** across all verifier reports
+3. Security sweep is PASS
+4. Common requirements fully satisfied
+
+A "pass" with known issues is NOT good enough. If a verifier scores "pass" but lists bugs, the deliverable is treated as **failed** — it goes back to generate. The goal is zero-defect delivery, not "good enough."
+
+`all_high_pass: true` AND `open_bugs: []` AND `security_sweep: "PASS"` → set `mode: "reflect"`.
+Otherwise → set `mode: "generate", round: M+1`. **No delays. No exceptions. Fix everything before moving on.**
 
 ---
 
