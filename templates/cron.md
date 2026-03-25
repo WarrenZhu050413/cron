@@ -94,6 +94,8 @@ These are checked in negotiate (plan review), generate (executors follow them), 
 
 **Data**: Use canonical database (not legacy). Don't duplicate authoritative external data. Scope all queries by permissions. Cache with TTL, not indefinitely.
 
+**Verification**: All verification must be **live E2E in a real browser** using Playwright (or the project's browser testing tool). Deploy to the test server before verifying—never verify against localhost alone. If the project has a test server, deploy there first, then verify in the browser. If no test server exists, flag this as a **Sprint 1 P0 deliverable**—you need one before meaningful verification is possible. Verifiers that only read code or run unit tests are insufficient; they must open the app, click through flows, and confirm real behavior.
+
 ---
 
 ## STEP 0: Read State
@@ -220,15 +222,18 @@ Agent(run_in_background: true,
 # Per-deliverable (one each, all parallel)
 Agent(run_in_background: true,
   prompt: "Deliverable: {JSON}. Read executor report.
-    TEST LIVE—run commands, check behavior, not just code.
+    TEST LIVE IN A REAL BROWSER using Playwright. Deploy to the test server first if available.
+    Open the actual app, navigate to the affected pages, click through the flows.
+    Do NOT just read code or run unit tests—you must verify real browser behavior.
     Score against calibration: the target is HIGH_PASS, not just pass.
     If ANY bugs exist, the deliverable FAILS regardless of score—list them all.
     Check Common Requirements compliance (UI, security, code, testing, data from cron/cron.md).
     Common requirement violations are automatic FAILs.
-    Assess qualitatively—how does it FEEL?
+    Assess qualitatively—how does it FEEL in the browser?
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}.json:
-    {score, calibration_match, common_reqs_pass, bugs, evidence, live_test, qualitative}
-    A deliverable with bugs=[] and calibration_match=high_pass is the ONLY way to pass.")
+    {score, calibration_match, common_reqs_pass, bugs, evidence, live_test, e2e_browser_tested, qualitative}
+    A deliverable with bugs=[] and calibration_match=high_pass is the ONLY way to pass.
+    If no test server exists, note this as a blocker.")
 ```
 
 **Step 2**: Check **common requirements** — for each deliverable that touched UI, security, code, tests, or data, verify compliance with the Common Requirements section above. Common requirement violations are scored as FAIL on the deliverable.
