@@ -51,9 +51,11 @@ plan → negotiate → generate → verify → (loop until all pass) → reflect
 9. **Every bug prevents its class** — encode as: type > lint > gate > test
 10. **User prompts are interrupts** — drop everything
 
-## CronCreate
+## Tick (every 5 minutes)
 
 ```
 CronCreate(cron="*/5 * * * *", recurring=true,
   prompt="Read cron/cron.md. Execute the current phase based on cron/state.json.")
 ```
+
+**Do NOT wait for the tick.** If you can keep going, keep going. The tick fires when you're idle — it's a safety net, not a pace-setter. If you're mid-sprint, continue working. The tick only matters if you've stopped.
