@@ -4,8 +4,8 @@ Launch sub-agents to build. You are the orchestrator — you dispatch, you don't
 
 ## 1. Read Context
 
-- `cron/contracts/sprint-{N}/tick-contract` — deliverables + verifiers (WHAT to build)
-- `cron/contracts/sprint-{N}/round-{M}-verify-report` — if round >1, read failures from last verification
+- `cron/contracts/sprint-{N}/contract` — deliverables + verifiers (WHAT to build)
+- `cron/contracts/sprint-{N}/round-{M}-report` — if round >1, read failures from last verification
 - `cron/state.json` — current sprint/round
 
 ## 2. Launch Sub-Agents
@@ -16,7 +16,7 @@ For each deliverable stream, launch a background Agent:
 - Non-overlapping file ownership between agents
 - Agents CAN use their own sub-agents internally
 
-If round >1: agents also get the verify-report failures — specific bugs to fix.
+If round >1: agents also get the report failures — specific bugs to fix.
 
 ## 3. Wait + Transition
 

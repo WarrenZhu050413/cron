@@ -6,7 +6,7 @@ Run ONCE per sprint. Read the user contract, explore the codebase, write a tick 
 
 In parallel:
 - `cron/user-contract` — what must always hold
-- `cron/verify-report.md` — last sprint's verification results (what failed, what to improve)
+- `cron/report.md` — last sprint's verification results (what failed, what to improve)
 - `CLAUDE.md` — architecture, conventions
 - `REVIEW.md` — semantic quality rules
 - `git log -20 --oneline` — recent changes
@@ -19,7 +19,7 @@ Launch 15-20 explorer agents. All opus, all parallel. Find problems, opportuniti
 
 ## 3. Write Tick Contract
 
-Write `cron/contracts/sprint-{N}/tick-contract`:
+Write `cron/contracts/sprint-{N}/contract`:
 
 **Rules for writing good contracts:**
 - Specify WHAT to deliver, never HOW to implement

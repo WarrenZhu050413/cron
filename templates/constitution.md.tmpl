@@ -14,13 +14,47 @@
 
 Every tick: read `cron/state.json`, execute the appropriate phase.
 
+```json
+// cron/state.json
+{"sprint": 2, "round": 3, "mode": "generate"}
+```
+
 | Mode | Read | Do | Next |
 |------|------|-----|------|
-| `plan` | `phases/plan.md` | Explorers → `tick-contract.md` | → `generate` (round=1) |
+| `plan` | `phases/plan.md` | Explorers → `contracts/sprint-{N}/contract` | → `generate` (round=1) |
 | `generate` | `phases/generate.md` | Sub-agents build against contract | → `verify` |
-| `verify` | `phases/verify.md` | Run ALL verifiers literally. Pass/fail. | → `generate` if fail, else round++ |
+| `verify` | `phases/verify.md` | Run ALL verifiers. Write `contracts/sprint-{N}/round-{M}-report` | → `generate` if fail, else round++ |
 | `verify` (round >6) | — | Sprint done | → `reflect` |
 | `reflect` | `phases/reflect.md` | Test, prevent, ship | → `plan` (sprint++) |
+
+## How Sprints Work `[FIXED]`
+
+The sprint number comes from `state.json`. Each phase uses it to read/write the right files:
+
+**Plan** (mode=plan, sprint=N):
+1. `mkdir -p cron/contracts/sprint-{N}`
+2. Launch explorers, synthesize findings
+3. Write `cron/contracts/sprint-{N}/contract` (deliverables + verifiers)
+4. Set state: `{mode: "generate", round: 1, sprint: N}`
+
+**Generate** (mode=generate, sprint=N, round=M):
+1. Read `cron/contracts/sprint-{N}/contract`
+2. If M>1: also read `cron/contracts/sprint-{N}/round-{M-1}-report` for bugs to fix
+3. Launch sub-agents to build
+4. Set state: `{mode: "verify", round: M, sprint: N}`
+
+**Verify** (mode=verify, sprint=N, round=M):
+1. Read `cron/contracts/sprint-{N}/contract` (criteria)
+2. Run all verifiers (general + sprint-specific)
+3. Write `cron/contracts/sprint-{N}/round-{M}-report`
+4. If fail: `{mode: "generate", round: M, sprint: N}` (retry same round)
+5. If pass and M<6: `{mode: "generate", round: M+1, sprint: N}` (next round)
+6. If pass and M≥6: `{mode: "reflect", sprint: N}` (sprint done)
+
+**Reflect** (mode=reflect, sprint=N):
+1. Read ALL `cron/contracts/sprint-{N}/round-*-report` files
+2. Test, prevent, consolidate, ship
+3. Set state: `{mode: "plan", round: 0, sprint: N+1}` (next sprint)
 
 ## Two Contracts `[FIXED]`
 
@@ -30,13 +64,13 @@ Written by the operator. Defines goals, features, user journeys, quality bar.
 - **Directional verifiers**: thresholds (e.g., tests > N) that shift upward over time.
 - The user contract is SACRED. Never weaken. Only strengthen.
 
-### Tick Contract (`cron/contracts/sprint-{N}/tick-contract`)
+### Sprint Contract (`cron/contracts/sprint-{N}/contract`)
 Written by the Planner each sprint. Defines deliverables + tick-specific verifiers.
 - Must OBEY the user contract (never break general verifiers)
 - Can OPTIMIZE on top of it (add features, raise quality)
 - Specify WHAT to deliver, never HOW to implement
 
-### Verify Report (`cron/contracts/sprint-{N}/round-{M}-verify-report`)
+### Verify Report (`cron/contracts/sprint-{N}/round-{M}-report`)
 Written by the Verify phase after each round. Scores per criterion. Pass/fail verdict.
 
 ## Contract Design Principles `[FIXED]`

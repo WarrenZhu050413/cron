@@ -9,9 +9,9 @@ For each monitored project:
 1. **Pane alive?** `tmux capture-pane -t "{pane}" -p -S -20 | tail -10`
 2. **Last tick recent?** `tail -1 {project}/cron/logs/summary.jsonl` — timestamp within last 30 min?
 3. **State progressing?** `cat {project}/cron/state.json` — mode/round/sprint changing?
-4. **Verifiers passing?** `cat {project}/cron/verify-report.md` — general verifiers all pass?
+4. **Verifiers passing?** `cat {project}/cron/report.md` — general verifiers all pass?
 5. **Empty loops?** Pane output shows "Looping" without agents = violation
-6. **Contract exists?** `{project}/cron/tick-contract.md` and `{project}/cron/user-contract` exist?
+6. **Contract exists?** `{project}/cron/contract.md` and `{project}/cron/user-contract` exist?
 
 ## What to Do
 
@@ -19,7 +19,7 @@ For each monitored project:
 - **Pane dead/stuck**: Write enforcement into their `cron/constitution.md` + notify pane
 - **Empty loops**: Write enforcement notice
 - **General verifiers failing**: P0 alert to operator
-- **No tick-contract**: Agent hasn't planned — remind it to read constitution
+- **No contract**: Agent hasn't planned — remind it to read constitution
 
 ## Monitored Projects
 

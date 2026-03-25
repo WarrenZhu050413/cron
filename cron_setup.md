@@ -84,7 +84,7 @@ Copy `~/claude-cron/templates/REVIEW.md.tmpl` to project root as `REVIEW.md`. Ad
 === Cron Loop Installed (Contract-Driven) ===
 Loop:       Plan → Generate → Verify → (6 rounds) → Reflect
 Project:    {name}
-Contracts:  user-contract (operator) + tick-contract.md (per-sprint)
+Contracts:  user-contract (operator) + contract.md (per-sprint)
 Explorers:  {count}
 Tests:      {commands}
 Deploy:     {target}
