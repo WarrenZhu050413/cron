@@ -296,7 +296,7 @@ To schedule: read this entire file, then pass its full contents as the CronCreat
 ```bash
 # Read cron.md, then call CronCreate with its contents as the prompt
 cat cron/cron.md
-# Then: CronCreate(cron="3,18,33,48 * * * *", recurring=true, prompt=<entire contents of cron.md>)
+# Then: CronCreate(cron="*/5 * * * *", recurring=true, prompt=<entire contents of cron.md>)
 ```
 
 Every tick re-ingests the full methodology. If cron.md changes mid-sprint, the next tick picks up the update.
