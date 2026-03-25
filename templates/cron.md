@@ -291,12 +291,23 @@ cat cron/contracts/sprint-{N}/round-{M}/_summary.json | grep '"all_pass"'
 
 ## TICK SCHEDULE
 
-```
-CronCreate(cron="3,18,33,48 * * * *", recurring=true,
-  prompt="Read cron/cron.md. Execute from STEP 0. Follow the gates — do not skip phases.")
-```
+The tick prompt embeds the gate checks directly so enforcement happens even without reading this file.
 
-**Do NOT wait for the tick.** Keep working continuously. The tick fires when you're idle — it's a safety net, not a pace-setter.
+```
+CronCreate(cron="3,18,33,48 * * * *", recurring=true, prompt="""
+CRON TICK. Read cron/state.json. Execute the phase indicated by "mode".
+
+GATE ENFORCEMENT (check BEFORE doing anything):
+- If mode=plan: produce deliverable JSONs in cron/contracts/sprint-{sprint}/deliverables/. Need ≥5 files to transition to negotiate.
+- If mode=negotiate: validate all deliverables have calibrated verifiers. Write contract.json. Transition to generate (round=1).
+- If mode=generate: launch executor sub-agents (one per deliverable, parallel, worktree isolation). ALL must write reports to round-{round}/executor/. Only then transition to verify.
+- If mode=verify: launch verifier sub-agents (one per deliverable + user contract check, parallel). Run security sweep (cron/security-sweep.md). Write _summary.json. IF all_pass=true → reflect. IF any failed → set mode=generate, round++ → LOOP BACK. You CANNOT skip to reflect with failures.
+- If mode=reflect: CONFIRM _summary.json shows all_pass=true. Encode bugs as lint rules. Rebase onto origin/main. Run E2E tests. Commit. Set mode=plan, sprint++.
+
+For full phase details: read cron/cron.md.
+Do NOT wait for this tick — keep working. This fires when you're idle as a safety net.
+""")
+```
 
 **If session restarts:** Re-run CronCreate. State persists in `cron/state.json`.
 
