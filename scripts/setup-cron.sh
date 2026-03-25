@@ -14,11 +14,12 @@ fi
 
 echo "Creating cron/ structure at $PROJECT_DIR/cron/"
 
-# Directory structure — 4 phases: plan, generate, verify, reflect
-mkdir -p "$PROJECT_DIR/cron"/{phases/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},protocols,logs/rounds}
+# Directory structure
+mkdir -p "$PROJECT_DIR/cron"/{contracts,phases/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},protocols,logs/rounds}
 
 # Core files
 cp "$TEMPLATE_DIR/finding-schema.ts" "$PROJECT_DIR/cron/"
+cp "$TEMPLATE_DIR/scoring-rubric.md" "$PROJECT_DIR/cron/"
 
 # Explorer defaults + swarm
 cp "$TEMPLATE_DIR/explorers/_defaults.md" "$PROJECT_DIR/cron/phases/explorers/"
@@ -49,6 +50,9 @@ cat > "$PROJECT_DIR/cron/state.json" << 'EOF'
 {"sprint": 1, "round": 0, "mode": "plan"}
 EOF
 
+# Contracts directory (user-contract + tick-contract live here)
+echo "  Contracts dir: cron/contracts/ (user-contract.md + tick-contract.md)"
+
 # REVIEW.md at project root
 if [[ ! -f "$PROJECT_DIR/REVIEW.md" ]]; then
   cp "$TEMPLATE_DIR/REVIEW.md.tmpl" "$PROJECT_DIR/REVIEW.md"
@@ -59,7 +63,13 @@ fi
 touch "$PROJECT_DIR/cron/logs/summary.jsonl"
 
 echo "✓ cron/ created at $PROJECT_DIR/cron/"
-echo "  Files: $(find "$PROJECT_DIR/cron" -type f | wc -l | tr -d ' ')"
 echo ""
-echo "  Next: Claude generates project-specific files:"
-echo "    user-contract.md, constitution.md, vision.md, tick-contract.md"
+echo "  Structure:"
+echo "    cron/contracts/        — user-contract.md + tick-contract.md (Claude generates)"
+echo "    cron/phases/           — plan, generate, verify, reflect"
+echo "    cron/phases/explorers/ — e1-e4 + discovery swarm"
+echo "    cron/protocols/        — bug-prevention, escalation, user-prompt"
+echo "    cron/logs/             — summary.jsonl + rounds/"
+echo "    cron/state.json        — sprint/round/mode tracking"
+echo "    cron/constitution.md   — state machine (Claude generates)"
+echo "    cron/vision.md         — north star (Claude generates)"

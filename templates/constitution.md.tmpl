@@ -24,17 +24,20 @@ Every tick: read `cron/state.json`, execute the appropriate phase.
 
 ## Two Contracts `[FIXED]`
 
-### User Contract (`cron/user-contract.md`)
+### User Contract (`cron/contracts/user-contract.md`)
 Written by the operator. Defines goals, features, user journeys, quality bar.
 - **General verifiers**: run EVERY tick. If ANY fails → P0, stop everything.
 - **Directional verifiers**: thresholds (e.g., tests > N) that shift upward over time.
 - The user contract is SACRED. Never weaken. Only strengthen.
 
-### Tick Contract (`cron/tick-contract.md`)
+### Tick Contract (`cron/contracts/tick-contract.md`)
 Written by the Planner each sprint. Defines deliverables + tick-specific verifiers.
 - Must OBEY the user contract (never break general verifiers)
 - Can OPTIMIZE on top of it (add features, raise quality)
 - Specify WHAT to deliver, never HOW to implement
+
+### Verify Report (`cron/contracts/verify-report.md`)
+Written by the Verify phase after each round. Scores per criterion. Pass/fail verdict.
 
 ## Contract Design Principles `[FIXED]`
 
