@@ -62,7 +62,7 @@ Read `~/claude-cron/templates/constitution.md.tmpl`. Generate `cron/constitution
 
 ### Step 4: Write remaining files
 
-- `cron/vision.md` — north star (from `~/claude-cron/templates/vision.md.tmpl`)
+- `cron/contracts/user-contract.md` — north star (from `~/claude-cron/templates/user-contract.md.tmpl`)
 - `cron/config.json` — intervals, thresholds
 - `cron/state.json` — `{sprint: 1, round: 0, mode: "plan"}`
 - `cron/phases/plan.md` — customize explorers for this project
