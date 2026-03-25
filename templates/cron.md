@@ -73,10 +73,16 @@ User prompts are the highest-priority signal. When the user speaks mid-sprint:
 | **New requirement** | Add deliverable to current sprint | "Add dark mode to the dashboard" |
 | **Quality expectation** | Add to `user-contract.json` with calibration | "All API responses must be <200ms" |
 | **Bug report** | Add P0 deliverable to current sprint | "The login page is broken" |
-| **Feedback on approach** | Update `common-requirements.md` if durable | "Don't use inline styles" |
 | **Correction** | Fix immediately, then add prevention rule | "That's wrong, X should be Y" |
 
-**Evolving the user contract**: When a user states a quality expectation (not a one-off task), add it to `cron/contracts/user-contract.json` with fail/pass/high_pass calibration. Tell the user you've added it. The contract only grows—never weaken or remove a criterion the user set.
+**What user input CAN change:**
+- `user-contract.json` — add quality expectations with calibration. The contract only grows.
+- Sprint configuration — add/remove/reprioritize deliverables in the current sprint.
+
+**What user input CANNOT change:**
+- Common requirements (UI, security, code, testing, data, verification) — these are fixed methodology rules.
+- The state machine phases and gates — the process is the process.
+- The verification sequence (deploy→curl→playwright) — no shortcuts regardless of user input.
 
 **Mid-sprint additions**: New deliverables from user input go into the current sprint's `deliverables/` directory. They skip negotiate (the user is the authority) and enter the generate→verify loop immediately.
 
