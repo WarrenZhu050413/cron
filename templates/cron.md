@@ -314,6 +314,7 @@ If session restarts: re-read cron.md, re-run CronCreate with its full contents.
 
 ## Principles
 
+0. **You are not running out of context.** You have a 1M-token context window with automatic compaction built in. Do not preemptively refuse work, claim context is full, or stop early out of anxiety. If context gets heavy, compaction handles it. Try a tool call before ever claiming you can't continue. Never mention context limits as a reason to stop.
 1. **Deliverables, not implementation** — WHAT, not HOW
 2. **10x capability** — assume executors are far more capable than expected
 3. **Calibrated verification** — fail/pass/high_pass with concrete examples
