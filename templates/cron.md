@@ -94,7 +94,14 @@ These are checked in negotiate (plan review), generate (executors follow them), 
 
 **Data**: Use canonical database (not legacy). Don't duplicate authoritative external data. Scope all queries by permissions. Cache with TTL, not indefinitely.
 
-**Verification**: All verification must be **live E2E in a real browser** using Playwright (or the project's browser testing tool). Deploy to the test server before verifying—never verify against localhost alone. If the project has a test server, deploy there first, then verify in the browser. If no test server exists, flag this as a **Sprint 1 P0 deliverable**—you need one before meaningful verification is possible. Verifiers that only read code or run unit tests are insufficient; they must open the app, click through flows, and confirm real behavior.
+**Verification**: All verification must follow this exact sequence — no shortcuts:
+1. **Deploy** to your test slot: `bash .claude/scripts/worker/deploy-to-slot.sh --service static` (or the project's deploy command)
+2. **Get an authenticated session**: `bash .claude/scripts/autologin.sh staff` (or the project's SSO/auth mechanism) — use real tokens, never hardcoded
+3. **Open the live app in Playwright**: navigate to the test server URL with the auth token
+4. **Click through every flow you changed**: open pages, fill forms, submit, verify responses, check dark mode, check error states
+5. **Screenshot evidence**: take screenshots of key states as proof
+
+Never verify against localhost alone. Never verify by just reading code or running unit tests. If the project has no test server or deploy mechanism, flag this as a **Sprint 1 P0 blocker**. Verifiers that skip browser testing are not verifying.
 
 ---
 

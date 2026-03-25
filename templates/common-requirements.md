@@ -46,3 +46,14 @@
 - Never duplicate data that already exists in an authoritative external system
 - All queries must be scoped by user permissions (no unscoped SELECT *)
 - Cache with TTL, not indefinitely—stale data is a bug
+
+## Verification (mandatory sequence — no shortcuts)
+
+Every verify round must follow this exact sequence:
+1. **Deploy** to test slot or test server — use the project's deploy command (e.g., `bash .claude/scripts/worker/deploy-to-slot.sh --service static`)
+2. **Authenticate** with real SSO/auth tokens — use the project's autologin (e.g., `bash .claude/scripts/autologin.sh staff`). Never hardcode tokens or use demo accounts.
+3. **Open a real browser** via Playwright — navigate to the deployed test URL with the auth token
+4. **Click through every changed flow** — open affected pages, fill forms, submit, check responses, verify dark mode, check error states
+5. **Screenshot evidence** — capture key states as proof of verification
+
+Reading code or running unit tests alone is NOT verification. Localhost-only testing is NOT verification. If the project has no test server, this is a Sprint 1 P0 blocker — get one before doing anything else.
