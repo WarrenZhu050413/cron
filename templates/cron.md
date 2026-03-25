@@ -295,16 +295,21 @@ The tick prompt embeds the gate checks directly so enforcement happens even with
 
 ```
 CronCreate(cron="3,18,33,48 * * * *", recurring=true, prompt="""
-CRON TICK. Read cron/state.json. Execute the phase indicated by "mode".
+CRON TICK.
 
-GATE ENFORCEMENT (check BEFORE doing anything):
-- If mode=plan: produce deliverable JSONs in cron/contracts/sprint-{sprint}/deliverables/. Need ≥5 files to transition to negotiate.
-- If mode=negotiate: validate all deliverables have calibrated verifiers. Write contract.json. Transition to generate (round=1).
-- If mode=generate: launch executor sub-agents (one per deliverable, parallel, worktree isolation). ALL must write reports to round-{round}/executor/. Only then transition to verify.
-- If mode=verify: launch verifier sub-agents (one per deliverable + user contract check, parallel). Run security sweep (cron/security-sweep.md). Write _summary.json. IF all_pass=true → reflect. IF any failed → set mode=generate, round++ → LOOP BACK. You CANNOT skip to reflect with failures.
-- If mode=reflect: CONFIRM _summary.json shows all_pass=true. Encode bugs as lint rules. Rebase onto origin/main. Run E2E tests. Commit. Set mode=plan, sprint++.
+STEP 1: Re-read cron/cron.md NOW. Every tick starts by re-reading the methodology.
+STEP 2: Read cron/state.json. Note the current sprint, round, and mode.
+STEP 3: Before executing the phase, check: am I missing any artifacts from the PREVIOUS phase?
+  - If mode=negotiate: do cron/contracts/sprint-{sprint}/deliverables/*.json exist (≥5)?  If not → mode should be plan.
+  - If mode=generate: does cron/contracts/sprint-{sprint}/contract.json exist?  If not → mode should be negotiate.
+  - If mode=verify: do cron/contracts/sprint-{sprint}/round-{round}/executor/*.json all exist?  If not → mode should be generate.
+  - If mode=reflect: does cron/contracts/sprint-{sprint}/round-{round}/_summary.json show all_pass=true?  If not → mode should be verify.
+  If any artifact is missing, FIX the state.json mode to the correct phase and execute THAT phase instead.
+STEP 4: Execute the phase per cron/cron.md instructions.
+STEP 5: After the phase completes, validate the gate for the NEXT transition (per cron/cron.md). Only update state.json if the gate passes.
 
-For full phase details: read cron/cron.md.
+KEY RULE: verify → reflect requires _summary.json with all_pass=true. If any deliverable failed, set mode=generate, round++. You CANNOT skip to reflect with failures.
+
 Do NOT wait for this tick — keep working. This fires when you're idle as a safety net.
 """)
 ```
