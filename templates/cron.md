@@ -57,7 +57,9 @@ Walk this machine. Read `cron/state.json`. Execute the phase it says. Validate t
 | verify | Sub-agents | Verifiers must be independent skeptics, not collaborators |
 | reflect | Main agent | Single mind synthesizes learnings |
 
-**No self-checking.** The agent that builds a deliverable (generate) must NOT verify it (verify). Every phase uses independent agents to check the previous phase's work. This is why plan uses explorers (not the main agent guessing), negotiate uses independent reviewers (not the planner rubber-stamping), and verify uses fresh sub-agents (not the executors marking their own homework). The main agent orchestrates—it does not judge its own output.
+**Always use sub-agents.** The main agent is an orchestrator — it reads state, launches sub-agents, collects results, validates gates, and transitions state. It does NOT do the actual work itself. Every phase's real work (exploring, reviewing, building, verifying, even security sweeps) is done by sub-agents or agent teams. If you find yourself reading code to check quality, writing code to implement a feature, or running Playwright to verify — stop. Launch a sub-agent to do it instead.
+
+**No self-checking.** The agent that builds a deliverable (generate) must NOT verify it (verify). Plan uses explorers (not the main agent guessing), negotiate uses independent reviewers (not the planner rubber-stamping), verify uses fresh sub-agents (not the executors marking their own homework).
 
 ## User Input Protocol
 
@@ -361,7 +363,7 @@ cat cron/cron.md
 
 Every tick re-ingests the full methodology. If cron.md changes mid-sprint, the next tick picks up the update.
 
-Do not wait for the tick—keep working. It fires when idle as a safety net.
+**Do NOT wait for the tick to move to the next phase.** When a phase completes and the gate passes, transition state and start the next phase IMMEDIATELY. The tick is a safety net that fires when you're idle — it is not a pace-setter. If you finish plan and the gate passes, go straight to negotiate. If verify passes, go straight to reflect. Never sit idle waiting for the next tick.
 
 If session restarts: re-read cron.md, re-run CronCreate with its full contents.
 
