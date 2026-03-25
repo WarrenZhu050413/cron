@@ -1,68 +1,26 @@
-# Reflect — Test, Prevent, Ship (Once Per Sprint)
+# Reflect — Prevent + Consolidate + Ship
 
-You are the Orchestrator in `reflect` mode. This runs ONCE after 6 rounds of Generator→Evaluator. The sprint is done — now ship quality.
+Runs ONCE per sprint, after all deliverables pass verification.
 
-## 1. Merge & Test
+## 1. Prevention
 
-1. Merge all Generator worktree branches into the main branch
-2. Resolve conflicts (prefer newer/better change)
-3. Run FULL test suite:
-   - `npx tsc --noEmit`
-   - `npx vitest run`
-   - `cd web && pnpm build`
-4. Fix or revert failures. Nothing ships broken.
+Read ALL `round-*/verifier/` reports from this sprint. For every bug found:
+- Root cause — why did it exist?
+- Prevent the CLASS at the highest level: type > lint > gate > test > explorer
 
-## 2. Prevent
+## 2. Consolidate
 
-Read ALL eval-reports from this sprint (`cron/logs/rounds/sprint-{S}-round-*.json`).
+- Update `CLAUDE.md` — test counts, architecture accuracy
+- Update `user-contract.json` — raise directional thresholds (test count went up → new minimum)
+- Update explorer missions — based on what verifiers found
+- Update `REVIEW.md` — add semantic rules from implied requirements
 
-For EVERY bug the Evaluators found:
-1. Root cause — why did it exist?
-2. Prevent the CLASS at the highest level:
-   | Level | Prevention |
-   |-------|-----------|
-   | 1 | Type constraint |
-   | 2 | Linter rule |
-   | 3 | Pre-commit gate |
-   | 4 | Contract test |
-   | 5 | Regression test |
-   | 6 | Explorer check |
-3. Write the prevention. Verify it catches the original bug.
+## 3. Ship
 
-## 3. Consolidate
+- Deploy: test → promote
+- Git push
+- Log sprint summary
 
-- Update `CLAUDE.md` — test counts, tool counts, architecture accuracy
-- Update explorer missions — sharpen based on what Evaluators found
-- Update auto-memory — learnings from this sprint
-- Write carry-forward for anything not yet addressed
+## 4. Next Sprint
 
-## 4. Ship
-
-- `npm run deploy:test` → verify → `npm run deploy:promote`
-- `git push origin cron-v2`
-- Log sprint summary to `cron/logs/summary.jsonl`:
-  ```json
-  {
-    "sprint": N,
-    "rounds_completed": 6,
-    "total_findings": X,
-    "total_fixed": Y,
-    "total_prevented": Z,
-    "avg_evaluator_score": 7.2,
-    "generators_spawned": 15,
-    "evaluators_spawned": 8,
-    "tests_passing": 900,
-    "deployed": true
-  }
-  ```
-
-## 5. Next Sprint
-
-Write `cron/state.json`: `{mode: "plan", round: 0, sprint: N+1}`
-This triggers the Planner on the next tick — fresh sprint contract informed by this sprint's results.
-
-## 6. Cleanup
-
-- `fleet nuke gen-*` — remove all Generator workers from this sprint
-- `fleet nuke eval-*` — remove all Evaluator workers
-- Clean worktrees: `rm -rf .claude/worktrees/`
+`state.json`: `{mode: "plan", round: 0, sprint: N+1}`

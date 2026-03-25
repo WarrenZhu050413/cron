@@ -1,0 +1,63 @@
+{
+  "goals": [
+    "AI construction cost chatbot for 造价师 at 诚信行",
+    "Professional, interpretable, trustworthy"
+  ],
+  "journeys": [
+    "User asks price query → clarification → results with source and judgment",
+    "User compares projects → comparison table with per-area metrics",
+    "Admin uploads SWT → data imported and searchable"
+  ],
+  "technical_quality_bar": [
+    {
+      "criterion": "All tests pass",
+      "calibration": {
+        "fail": "1+ test failures in vitest output",
+        "pass": "0 failures, all suites green",
+        "high_pass": "0 failures + test count increased from previous sprint"
+      }
+    },
+    {
+      "criterion": "No TypeScript errors",
+      "calibration": {
+        "fail": "tsc reports errors",
+        "pass": "tsc clean",
+        "high_pass": "tsc clean + stricter tsconfig options enabled"
+      }
+    },
+    {
+      "criterion": "Production healthy",
+      "calibration": {
+        "fail": "health endpoint returns non-200 or times out",
+        "pass": "200 OK within 2s",
+        "high_pass": "200 OK + all tool endpoints respond + stats show correct counts"
+      }
+    }
+  ],
+  "product_quality_bar": [
+    {
+      "criterion": "Every judgment shows formula + inputs + calculation + confidence",
+      "calibration": {
+        "fail": "A verdict like '价格偏低' with no explanation",
+        "pass": "Verdict with formula, inputs, calculation, source shown",
+        "high_pass": "Full trace + visual confidence indicator + comparison context + drill-down to source data"
+      }
+    },
+    {
+      "criterion": "Clarification-first for ambiguous queries",
+      "calibration": {
+        "fail": "User asks '查价格' and system guesses a material",
+        "pass": "System asks which material, unit, and time range",
+        "high_pass": "System asks smart clarifying questions, suggests common options based on context"
+      }
+    },
+    {
+      "criterion": "Professional Chinese responses, no emoji",
+      "calibration": {
+        "fail": "Response contains emoji or casual language",
+        "pass": "Professional tone, domain terminology, data disclaimer",
+        "high_pass": "Indistinguishable from a senior 造价师's writing"
+      }
+    }
+  ]
+}

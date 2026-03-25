@@ -1,29 +1,24 @@
-# Generate — Build Against the Tick Contract
+# Generate — Parallel Executors Build Against Contract
 
-Launch sub-agents to build. You are the orchestrator — you dispatch, you don't build.
+Launch up to 15 executor sub-agents in ONE message. All parallel, worktree isolation.
 
 ## 1. Read Context
 
-- `cron/contracts/sprint-{N}/contract` — deliverables + verifiers (WHAT to build)
-- `cron/contracts/sprint-{N}/round-{M}-report` — if round >1, read failures from last verification
-- `cron/state.json` — current sprint/round
+- `contracts/sprint-{N}/deliverables/` — what to build
+- If round >1: `contracts/sprint-{N}/round-{M-1}/verifier/` — bugs to fix from last round
 
-## 2. Launch Sub-Agents
+## 2. Launch Executors
 
-For each deliverable stream, launch a background Agent:
-- Model: opus, isolation: worktree (for code changes) or explore (for research)
-- Each agent gets: the deliverable description + relevant file paths + "commit after each change"
-- Non-overlapping file ownership between agents
-- Agents CAN use their own sub-agents internally
+One sub-agent per independent deliverable. Each agent:
+- Reads its deliverable JSON (description + verifier)
+- Builds the feature
+- Writes the test if it doesn't exist (the test IS the verifier)
+- Does code-level validation inline (tsc, vitest for changed files)
+- Commits after each meaningful change
+- Writes `contracts/sprint-{N}/round-{M}/executor/{deliverable}.json`
 
-If round >1: agents also get the report failures — specific bugs to fix.
+If round >1: only launch executors for FAILED deliverables (read _summary.json).
 
-## 3. Wait + Transition
+## 3. Update State
 
-When all agents complete → `state.json`: `{mode: "verify"}`
-
-## Key Rules
-
-- Specify WHAT each agent should deliver, not HOW to implement it
-- The tick contract's verifiers will test the output — agents should ship quality
-- If an agent gets stuck: kill it, simplify its deliverable, relaunch
+When all executors complete: `state.json`: `{mode: "verify", round: M, sprint: N}`

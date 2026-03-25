@@ -1,77 +1,43 @@
-# Verify — Run All Contracts
+# Verify — Parallel Verifiers Score Against Contract + User Contract
 
-The verifiers are the skeptic. Run commands literally. No interpretation. No "I think it passes."
+Launch up to 15 verifier sub-agents in ONE message. All parallel. Each verifier is a SKEPTIC.
 
-## 1. Run General Verifiers (from user-contract)
+## 1. User Contract Compliance
 
-These are HARD GATES. If ANY fails → P0. Do not proceed to tick verifiers.
+One verifier checks quality bars from `user-contract.json`:
+- Technical bar: tests pass? types clean? prod healthy?
+- Product bar: judgments interpretable? feedback buttons? no emoji?
+Writes `contracts/sprint-{N}/round-{M}/verifier/_general.json`
 
-Read `cron/user-contract`, find the `General Verifiers` section. Run each command. Record pass/fail.
+## 2. Deliverable Verification
 
-```bash
-# Example (actual commands come from user-contract):
-npx tsc --noEmit                    # pass/fail
-npx vitest run                      # pass/fail (check exit code)
-curl -sf http://8.135.53.164/health # pass/fail
-```
+One verifier per deliverable. Each:
+- Reads deliverable JSON (description + calibration)
+- **Tests LIVE** — curl production, send real queries, run the test file, navigate the UI
+- Scores against calibration: does it match fail, pass, or high_pass?
+- Writes **qualitative** assessment — not just "test passed" but how the experience FEELS
+- Files specific bugs with file:line if score < pass
+- Notes implied requirements the plan didn't mention
+- Writes `contracts/sprint-{N}/round-{M}/verifier/{deliverable}.json`
 
-Also check directional verifiers (thresholds that must not regress):
-- Test count ≥ threshold
-- Type hole count ≤ threshold
+## 3. Calibration
 
-**If any general verifier FAILS**: set mode="generate", DO NOT increment round. The failure is a P0 bug — generator must fix it before anything else.
+Each verifier reads `scoring-rubric.md` for grading calibration. Read previous rounds' reports to maintain consistency. Don't grade lenient — if it doesn't match the calibration's "pass" example, it's not a pass.
 
-## 2. Run Tick Verifiers (from contract)
+## 4. Summary
 
-Read `cron/contracts/sprint-{N}/contract`, find the `Tick Verifiers` section. Run each command. Score 0-10:
-
-| Score | Meaning |
-|-------|---------|
-| 0-2 | Not met — file specific bug |
-| 3-4 | Partially met — needs more work |
-| 5-6 | Met minimally |
-| 7-8 | Met well |
-| 9-10 | Exceeded expectations |
-
-## 3. Probe for Implied Requirements
-
-Beyond the explicit verifiers, ask: "What SHOULD work that nobody specified?"
-- Try edge cases the contract didn't mention
-- Test error handling paths
-- Check accessibility, performance, security implications
-- Score these as bonus findings (don't block, but report)
-
-## 4. Write Verify Report
-
-Write `cron/contracts/sprint-{N}/round-{M}-report`:
+Write `contracts/sprint-{N}/round-{M}/_summary.json`:
 ```json
 {
   "sprint": N, "round": M,
-  "general": {"tsc": "pass", "vitest": "pass", "health": "pass"},
-  "directional": {"test_count": {"value": 875, "threshold": 867, "status": "pass"}},
-  "tick": {
-    "deliverable-1": {"score": 8, "status": "pass", "notes": "..."},
-    "deliverable-2": {"score": 3, "status": "fail", "bug": "specific issue at file:line"}
-  },
-  "implied": [{"finding": "edge case X not handled", "severity": "p2"}],
-  "tick_average": 5.5,
-  "verdict": "fail"
+  "scores": {"deliverable-1": 7, "deliverable-2": 4, ...},
+  "all_pass": false,
+  "failed": ["deliverable-2"],
+  "quality_bars": {"technical": "pass", "product": "pass"}
 }
 ```
 
 ## 5. Decision
 
-- **General verifier failed** → `mode: "generate"` (same round, must fix P0)
-- **Tick average <6** → `mode: "generate"` (same round, retry with bug list)
-- **Tick average ≥6** → round++
-  - round >6 → `mode: "reflect"` (sprint complete)
-  - round ≤6 → `mode: "generate"` (next round)
-
-## Key Rules
-
-- Run commands LITERALLY — copy-paste from contract, check exit code
-- A curl returning 500 is a FAIL, not "it's probably fine"
-- A vitest with 1 failure is a FAIL, not "mostly passes"
-- Bugs must be SPECIFIC: file, line, what's wrong, what's expected
-- The verifier does NOT fix — it only reports
-- Implied requirement probing makes the contract SMARTER over time
+- ANY deliverable failed → `{mode: "generate", round: M}` (retry with bug list)
+- ALL pass → `{mode: "reflect", sprint: N}`

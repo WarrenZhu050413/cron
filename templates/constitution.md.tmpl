@@ -1,126 +1,43 @@
 # {{PROJECT_NAME}} — Contract-Driven Sprint System
 
-> 止于至善。—《大学》
 > "Constrain on the deliverables, let them figure out the path." —Anthropic
-> "The criteria ARE the evaluator."
 
-## Style Guide for This Document
+## State Machine `[FIXED]`
 
-- **Why before how.** Purpose before procedure.
-- **Every sentence must be load-bearing.** Remove if removing changes nothing.
-- **Maximum precision.** Ambiguity breeds liberal interpretation.
+Read `cron/state.json`. Execute the appropriate phase.
 
-## This Is a State Machine `[FIXED]`
+| Mode | Phase file | Do | Next |
+|------|-----------|-----|------|
+| `plan` | `phases/plan.md` | Explore → deliverables/*.json | → `negotiate` |
+| `negotiate` | `phases/negotiate.md` | Verify plan + tighten criteria (loop until clean) | → `generate` (round=1) |
+| `generate` | `phases/generate.md` | Launch ≤15 parallel executor sub-agents | → `verify` |
+| `verify` | `phases/verify.md` | Launch ≤15 parallel verifier sub-agents | → `generate` if any fail, → `reflect` if all pass |
+| `reflect` | `phases/reflect.md` | Prevent, consolidate, ship | → `plan` (sprint++) |
 
-Every tick: read `cron/state.json`, execute the appropriate phase.
+## Contracts `[FIXED]`
 
-```json
-// cron/state.json
-{"sprint": 2, "round": 3, "mode": "generate"}
-```
+All JSON. All in `cron/contracts/`.
 
-| Mode | Read | Do | Next |
-|------|------|-----|------|
-| `plan` | `phases/plan.md` | Explorers → `contracts/sprint-{N}/contract` | → `generate` (round=1) |
-| `generate` | `phases/generate.md` | Sub-agents build against contract | → `verify` |
-| `verify` | `phases/verify.md` | Run ALL verifiers. Write `contracts/sprint-{N}/round-{M}-report` | → `generate` if fail, else round++ |
-| `verify` (round >6) | — | Sprint done | → `reflect` |
-| `reflect` | `phases/reflect.md` | Test, prevent, ship | → `plan` (sprint++) |
-
-## How Sprints Work `[FIXED]`
-
-The sprint number comes from `state.json`. Each phase uses it to read/write the right files:
-
-**Plan** (mode=plan, sprint=N):
-1. `mkdir -p cron/contracts/sprint-{N}`
-2. Launch explorers, synthesize findings
-3. Write `cron/contracts/sprint-{N}/contract` (deliverables + verifiers)
-4. Set state: `{mode: "generate", round: 1, sprint: N}`
-
-**Generate** (mode=generate, sprint=N, round=M):
-1. Read `cron/contracts/sprint-{N}/contract`
-2. If M>1: also read `cron/contracts/sprint-{N}/round-{M-1}-report` for bugs to fix
-3. Launch sub-agents to build
-4. Set state: `{mode: "verify", round: M, sprint: N}`
-
-**Verify** (mode=verify, sprint=N, round=M):
-1. Read `cron/contracts/sprint-{N}/contract` (criteria)
-2. Run all verifiers (general + sprint-specific)
-3. Write `cron/contracts/sprint-{N}/round-{M}-report`
-4. If fail: `{mode: "generate", round: M, sprint: N}` (retry same round)
-5. If pass and M<6: `{mode: "generate", round: M+1, sprint: N}` (next round)
-6. If pass and M≥6: `{mode: "reflect", sprint: N}` (sprint done)
-
-**Reflect** (mode=reflect, sprint=N):
-1. Read ALL `cron/contracts/sprint-{N}/round-*-report` files
-2. Test, prevent, consolidate, ship
-3. Set state: `{mode: "plan", round: 0, sprint: N+1}` (next sprint)
-
-## Two Contracts `[FIXED]`
-
-### User Contract (`cron/contracts/user-contract`)
-Written by the operator. Defines goals, features, user journeys, quality bar.
-- **General verifiers**: run EVERY tick. If ANY fails → P0, stop everything.
-- **Directional verifiers**: thresholds (e.g., tests > N) that shift upward over time.
-- The user contract is SACRED. Never weaken. Only strengthen.
-
-### Sprint Contract (`cron/contracts/sprint-{N}/contract`)
-Written by the Planner each sprint. Defines deliverables + tick-specific verifiers.
-- Must OBEY the user contract (never break general verifiers)
-- Can OPTIMIZE on top of it (add features, raise quality)
-- Specify WHAT to deliver, never HOW to implement
-
-### Verify Report (`cron/contracts/sprint-{N}/round-{M}-report`)
-Written by the Verify phase after each round. Scores per criterion. Pass/fail verdict.
-
-## Contract Design Principles `[FIXED]`
-
-1. **Deliverables, not implementation** — WHAT to build, not HOW. Errors in technical spec cascade.
-2. **Verifiers push forward** — not just "does it work?" but "is it excellent?" Probe implied requirements.
-3. **Standards rise** — each sprint's contract is more ambitious than the last.
-4. **No rubber stamps** — verifiers that always pass are useless. Make them HARD.
-5. **Refine or pivot** — if scores plateau, try a different approach entirely.
-
-## Sprint Structure `[FIXED]`
-
-- **Sprint** = 6 rounds of Generate→Verify, bookended by Plan and Reflect
-- **Round** = one Generate→Verify cycle
-- Plan runs ONCE per sprint (produces tick contract)
-- Reflect runs ONCE per sprint (ships everything)
-- If verify fails → generate again (same round, retry with failure list)
-- If verify passes → next round
+- `user-contract.json` — permanent. Goals, journeys, two quality bars (technical + product). Every criterion has calibration (fail/pass/high_pass). Sacred — never weaken.
+- `sprint-{N}/contract.json` — per-sprint metadata + deliverable list.
+- `sprint-{N}/deliverables/*.json` — one per deliverable. Independent. Description + verifier (description, qualitative, test pointer, calibration).
+- `sprint-{N}/round-{M}/executor/*.json` — what each executor built.
+- `sprint-{N}/round-{M}/verifier/*.json` — score + evidence + live_test + bugs per deliverable.
+- `sprint-{N}/round-{M}/_summary.json` — aggregate scores, pass/fail verdict.
 
 ## Principles `[FIXED]`
 
-1. **止于至善** — Each sprint leaves the codebase measurably better
-2. **Contracts are testable** — every deliverable has a verifiable criterion
-3. **Verifiers are commands** — run literally, no interpretation, no "I think it passes"
-4. **User contract is sacred** — never weaken, only strengthen
-5. **Every bug prevents its class** — type > lint > gate > test > explorer
-6. **User prompts are interrupts** — drop everything when the operator speaks
+1. **Deliverables, not implementation** — specify WHAT, never HOW
+2. **10x capability** — assume generators are 10x more capable than you'd guess
+3. **Calibrated verification** — every criterion has fail/pass/high_pass examples
+4. **Live E2E testing** — verifiers test the RUNNING app, not just read code
+5. **Qualitative + quantitative** — verifiers assess how it FEELS, not just if tests pass
+6. **Loop until clean** — rounds continue until ALL deliverables pass. No fixed count.
+7. **Independent parallelism** — up to 15 deliverables, each independent, all executed + verified in parallel
+8. **User contract is sacred** — checked every verify round. Never weaken, only strengthen.
+9. **Every bug prevents its class** — type > lint > gate > test > explorer
+10. **User prompts are interrupts** — drop everything when the operator speaks
 
 ## Architecture `[FIXED]`
 
-See `CLAUDE.md` for full details.
-{{PROJECT-SPECIFIC ARCHITECTURE SECTION}}
-- **Deploy target**: {{DEPLOY_TARGET}}
-- **Machine**: {{MACHINE_DESCRIPTION}}. Project dir: `{{PROJECT_DIR}}`.
-
-## Phases `[FIXED]` structure, `[DYNAMIC]` content
-
-| Phase | File | Purpose |
-|-------|------|---------|
-| Plan | `phases/plan.md` | Explorers → tick contract (once per sprint) |
-| Generate | `phases/generate.md` | Sub-agents build against contract (each round) |
-| Verify | `phases/verify.md` | Run general + tick verifiers literally (each round) |
-| Reflect | `phases/reflect.md` | Test + prevent + ship (once per sprint) |
-
-## Protocols `[DYNAMIC]`
-
-- `protocols/bug-regression-prevention.md` — MANDATORY on every bug
-- `protocols/escalation.md` — items needing operator attention
-- `protocols/user-prompt-reaction.md` — operator speaks, drop everything
-
-## Crash Recovery `[FIXED]`
-
-state.json missing → mode="plan". All state is file-based. Nothing depends on context.
+See `CLAUDE.md`. {{PROJECT-SPECIFIC ARCHITECTURE SECTION}}

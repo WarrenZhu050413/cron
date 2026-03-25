@@ -1,35 +1,33 @@
-# Plan — Produce Tick Contract
+# Plan — Explore + Produce Sprint Deliverables
 
-Run ONCE per sprint. Read the user contract, explore the codebase, write a tick contract with deliverables + verifiers.
+Run ONCE per sprint. Produce 10-15 independent deliverables with calibrated verifiers.
 
-## 1. Read Contracts + Context
+## 1. Context
 
-In parallel:
-- `cron/user-contract` — what must always hold
-- `cron/report.md` — last sprint's verification results (what failed, what to improve)
+Read in parallel:
+- `cron/contracts/user-contract.json` — goals, quality bars
+- Previous sprint's round reports — what worked, what failed
 - `CLAUDE.md` — architecture, conventions
 - `REVIEW.md` — semantic quality rules
-- `git log -20 --oneline` — recent changes
-- `warren_escalation_queue.md` — open items
-- Production: `curl -s http://8.135.53.164/health`
+- `git log -20 --oneline`
+- Production state
 
-## 2. Discover
+## 2. Explore
 
-Launch 15-20 explorer agents. All opus, all parallel. Find problems, opportunities, improvements.
+Launch 15 explorer sub-agents in parallel. Find problems, opportunities, improvements.
 
-## 3. Write Tick Contract
+## 3. Produce Deliverables
 
-Write `cron/contracts/sprint-{N}/contract`:
+Create `contracts/sprint-{N}/contract.json` + `deliverables/*.json`.
 
-**Rules for writing good contracts:**
-- Specify WHAT to deliver, never HOW to implement
-- Each deliverable gets a CONCRETE verifier (a command that outputs pass/fail)
-- Verifiers should be HARD to pass — push quality forward, don't rubber-stamp
-- Include progression verifiers that raise the bar beyond current state
-- Include discovery verifiers that probe for implied requirements
-- Enough work for 6 rounds (don't plan just 1 round of small fixes)
-- Standards must be higher than last sprint's contract
+Rules:
+- **10-15 deliverables** (cap at 15)
+- **Each is INDEPENDENT** — no dependencies. If two things depend on each other, merge them.
+- **Each has calibration** — fail/pass/high_pass examples
+- **Specify WHAT, not HOW** — description + verifier description, not implementation details
+- **10x heuristic** — assume generators are 10x more capable than you'd guess. Be ambitious.
+- **Verifiers point to tests** — if the test doesn't exist, the executor writes it. Include qualitative description too.
 
 ## 4. Update State
 
-`state.json`: `{mode: "generate", round: 1, sprint: N}`
+`state.json`: `{mode: "negotiate", round: 0, sprint: N}`
