@@ -5,6 +5,54 @@
 
 ---
 
+## HOW THIS WORKS
+
+### Sprints and Rounds
+
+Work is organized into **sprints**. Each sprint plans a batch of 5-15 independent deliverables, then builds and verifies them.
+
+Within a sprint, the **generate→verify** cycle may loop multiple times. Each loop is a **round**. Round 1 attempts all deliverables. If some fail verification, round 2 re-generates only the failures. Rounds repeat until every deliverable passes. Only then does the sprint complete.
+
+```
+Sprint 1
+  └─ Round 1: generate all → verify all → 3 fail
+  └─ Round 2: generate 3 failures → verify 3 → 1 still fails
+  └─ Round 3: generate 1 failure → verify 1 → all pass ✓
+  └─ Reflect → ship → Sprint 2
+```
+
+### State Transition Diagram
+
+```
+                    ┌─────────────────────────────────────────┐
+                    │                                         │
+                    ▼                                         │
+  ┌──────┐    ┌───────────┐    ┌──────────┐    ┌──────────┐  │   ┌─────────┐
+  │ plan │───▶│ negotiate │───▶│ generate │───▶│  verify  │──┘   │ reflect │
+  └──────┘    └───────────┘    └──────────┘    └──────────┘      └─────────┘
+      ▲            │                ▲               │                 │
+      │            │                │               │                 │
+      │            │                └───────────────┘                 │
+      │            │                 any deliverable                  │
+      │            │                 failed: round++                  │
+      │            │                                                  │
+      │            └── plan quality bad: loop negotiate               │
+      │                                                               │
+      └───────────────────────────────────────────────────────────────┘
+                              sprint++, next cycle
+```
+
+**You MUST walk through this state machine.** Read `cron/state.json`, execute the phase it says, validate the gate, transition. No shortcuts.
+
+- `plan` → produces deliverable JSONs → gate: ≥5 files exist → `negotiate`
+- `negotiate` → validates plan quality → gate: contract.json written → `generate` (round=1)
+- `generate` → executor sub-agents build features → gate: all executor reports exist → `verify`
+- `verify` → verifier sub-agents score + security sweep → gate: `_summary.json` with `all_pass: true` → `reflect`
+- `verify` (failures) → gate: `all_pass: false` → **back to `generate`** (round++)
+- `reflect` → prevention, rebase, E2E, ship → `plan` (sprint++)
+
+---
+
 ## STEP 0: READ STATE + GATE CHECK
 
 ```bash
