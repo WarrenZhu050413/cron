@@ -5,7 +5,7 @@ Run ONCE per sprint. Read the user contract, explore the codebase, write a tick 
 ## 1. Read Contracts + Context
 
 In parallel:
-- `cron/user-contract.md` — what must always hold
+- `cron/user-contract` — what must always hold
 - `cron/verify-report.md` — last sprint's verification results (what failed, what to improve)
 - `CLAUDE.md` — architecture, conventions
 - `REVIEW.md` — semantic quality rules

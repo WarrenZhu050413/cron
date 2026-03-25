@@ -46,7 +46,7 @@ bash ~/claude-cron/scripts/setup-cron.sh "$(pwd)"
 
 ### Step 2: Write User Contract
 
-Read `~/claude-cron/templates/user-contract.md.tmpl`. Generate `cron/user-contract.md` with:
+Read `~/claude-cron/templates/user-contract.tmpl`. Generate `cron/user-contract` with:
 - Goals from operator's vision answer
 - Features from CLAUDE.md
 - User journeys from operator's answer (question 6)
@@ -62,7 +62,7 @@ Read `~/claude-cron/templates/constitution.md.tmpl`. Generate `cron/constitution
 
 ### Step 4: Write remaining files
 
-- `cron/contracts/user-contract.md` — north star (from `~/claude-cron/templates/user-contract.md.tmpl`)
+- `cron/contracts/user-contract` — north star (from `~/claude-cron/templates/user-contract.tmpl`)
 - `cron/config.json` — intervals, thresholds
 - `cron/state.json` — `{sprint: 1, round: 0, mode: "plan"}`
 - `cron/phases/plan.md` — customize explorers for this project
@@ -84,7 +84,7 @@ Copy `~/claude-cron/templates/REVIEW.md.tmpl` to project root as `REVIEW.md`. Ad
 === Cron Loop Installed (Contract-Driven) ===
 Loop:       Plan → Generate → Verify → (6 rounds) → Reflect
 Project:    {name}
-Contracts:  user-contract.md (operator) + tick-contract.md (per-sprint)
+Contracts:  user-contract (operator) + tick-contract.md (per-sprint)
 Explorers:  {count}
 Tests:      {commands}
 Deploy:     {target}

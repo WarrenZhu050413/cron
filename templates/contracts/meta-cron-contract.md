@@ -11,7 +11,7 @@ For each monitored project:
 3. **State progressing?** `cat {project}/cron/state.json` — mode/round/sprint changing?
 4. **Verifiers passing?** `cat {project}/cron/verify-report.md` — general verifiers all pass?
 5. **Empty loops?** Pane output shows "Looping" without agents = violation
-6. **Contract exists?** `{project}/cron/tick-contract.md` and `{project}/cron/user-contract.md` exist?
+6. **Contract exists?** `{project}/cron/tick-contract.md` and `{project}/cron/user-contract` exist?
 
 ## What to Do
 

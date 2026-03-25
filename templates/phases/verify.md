@@ -2,14 +2,14 @@
 
 The verifiers are the skeptic. Run commands literally. No interpretation. No "I think it passes."
 
-## 1. Run General Verifiers (from user-contract.md)
+## 1. Run General Verifiers (from user-contract)
 
 These are HARD GATES. If ANY fails → P0. Do not proceed to tick verifiers.
 
-Read `cron/user-contract.md`, find the `General Verifiers` section. Run each command. Record pass/fail.
+Read `cron/user-contract`, find the `General Verifiers` section. Run each command. Record pass/fail.
 
 ```bash
-# Example (actual commands come from user-contract.md):
+# Example (actual commands come from user-contract):
 npx tsc --noEmit                    # pass/fail
 npx vitest run                      # pass/fail (check exit code)
 curl -sf http://8.135.53.164/health # pass/fail

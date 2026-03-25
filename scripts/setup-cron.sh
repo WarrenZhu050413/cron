@@ -51,7 +51,7 @@ cat > "$PROJECT_DIR/cron/state.json" << 'EOF'
 EOF
 
 # Contracts directory (user-contract + tick-contract live here)
-echo "  Contracts dir: cron/contracts/ (user-contract.md + tick-contract.md)"
+echo "  Contracts dir: cron/contracts/ (user-contract + tick-contract.md)"
 
 # REVIEW.md at project root
 if [[ ! -f "$PROJECT_DIR/REVIEW.md" ]]; then
@@ -65,7 +65,7 @@ touch "$PROJECT_DIR/cron/logs/summary.jsonl"
 echo "✓ cron/ created at $PROJECT_DIR/cron/"
 echo ""
 echo "  Structure:"
-echo "    cron/contracts/        — user-contract.md + tick-contract.md (Claude generates)"
+echo "    cron/contracts/        — user-contract + tick-contract.md (Claude generates)"
 echo "    cron/phases/           — plan, generate, verify, reflect"
 echo "    cron/phases/explorers/ — e1-e4 + discovery swarm"
 echo "    cron/protocols/        — bug-prevention, escalation, user-prompt"
