@@ -59,6 +59,27 @@ Walk this machine. Read `cron/state.json`. Execute the phase it says. Validate t
 
 **No self-checking.** The agent that builds a deliverable (generate) must NOT verify it (verify). Every phase uses independent agents to check the previous phase's work. This is why plan uses explorers (not the main agent guessing), negotiate uses independent reviewers (not the planner rubber-stamping), and verify uses fresh sub-agents (not the executors marking their own homework). The main agent orchestrates—it does not judge its own output.
 
+## User Input Protocol
+
+User prompts are the highest-priority signal. When the user speaks mid-sprint:
+
+1. **Stop current work immediately.** Respond to the user first.
+2. **Evaluate the input.** Ask: is this a one-time instruction, or a durable quality expectation?
+3. **Route accordingly:**
+
+| Input type | Action | Example |
+|-----------|--------|---------|
+| **Direction change** | Adjust current sprint deliverables | "Focus on performance, not features" |
+| **New requirement** | Add deliverable to current sprint | "Add dark mode to the dashboard" |
+| **Quality expectation** | Add to `user-contract.json` with calibration | "All API responses must be <200ms" |
+| **Bug report** | Add P0 deliverable to current sprint | "The login page is broken" |
+| **Feedback on approach** | Update `common-requirements.md` if durable | "Don't use inline styles" |
+| **Correction** | Fix immediately, then add prevention rule | "That's wrong, X should be Y" |
+
+**Evolving the user contract**: When a user states a quality expectation (not a one-off task), add it to `cron/contracts/user-contract.json` with fail/pass/high_pass calibration. Tell the user you've added it. The contract only grows—never weaken or remove a criterion the user set.
+
+**Mid-sprint additions**: New deliverables from user input go into the current sprint's `deliverables/` directory. They skip negotiate (the user is the authority) and enter the generate→verify loop immediately.
+
 ---
 
 ## STEP 0: Read State
