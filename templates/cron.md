@@ -134,7 +134,8 @@ Explore the codebase. Produce calibrated deliverables.
 1. Read `cron/contracts/user-contract.json`—every deliverable must serve these goals.
 2. Read `cron/common-requirements.md`—rules all deliverables must follow.
 3. Sprint 1 only: read `cron/code-quality-bootstrap.md`, add missing quality gates as deliverables.
-4. Launch **3–8 Explore sub-agents in parallel** (single message, multiple `Agent` calls):
+4. **Cross-sprint learning**: If sprint >1, read the previous sprint's `_summary.json` and all `verifier/*.json` reports. Learn what went wrong. Don't repeat the same bugs. Don't plan deliverables that will hit the same issues. If a pattern of failures appeared (e.g., "dark mode always breaks"), make a deliverable specifically to prevent that class.
+5. Launch **3–8 Explore sub-agents in parallel** (single message, multiple `Agent` calls):
    ```
    Agent(subagent_type: "Explore", run_in_background: true,
      prompt: "Explore {area}: bugs, missing features, code health, test gaps, UI, security.")
@@ -146,18 +147,29 @@ Explore the codebase. Produce calibrated deliverables.
      "id": "descriptive-kebab-name",
      "title": "What this achieves",
      "description": "Specify WHAT, not HOW.",
-     "acceptance_criteria": ["Testable criterion 1", "Testable criterion 2"],
+     "acceptance_criteria": [
+       {
+         "criterion": "Specific testable condition",
+         "calibration": {
+           "fail": "Concrete failure — what a verifier would SEE if this is broken",
+           "pass": "Concrete pass — what a verifier would SEE if this works",
+           "high_pass": "Concrete excellence — what a verifier would SEE if this exceeds expectations"
+         }
+       }
+     ],
      "verifier": {
-       "description": "Commands to run, URLs to check, behavior to observe.",
-       "qualitative_check": "How should it FEEL?",
+       "description": "Exact commands to run, URLs to visit, buttons to click.",
+       "qualitative_check": "How should it FEEL to a real user?",
        "calibration": {
-         "fail": "Concrete failure example",
-         "pass": "Concrete passing example",
-         "high_pass": "Concrete excellence example"
+         "fail": "Overall failure example",
+         "pass": "Overall passing example",
+         "high_pass": "Overall excellence example"
        }
      }
    }
    ```
+
+   **Calibration quality matters.** Each acceptance criterion gets its own fail/pass/high_pass. Vague calibration ("it should work") is useless — the verifier needs to compare what they SEE against concrete examples. Good calibration: "fail: search returns 0 results for '张' / pass: search returns residents with arrears amounts / high_pass: search returns residents with arrears, payment links, and collection history inline". Bad calibration: "fail: broken / pass: works / high_pass: works well".
 
 **Gate**: `ls cron/contracts/sprint-{N}/deliverables/*.json | wc -l` → ≥5 files → set `mode: "negotiate"`.
 
@@ -175,11 +187,14 @@ Verify plan quality. Tighten weak criteria. Loop until clean.
 | Criterion | Fail | Pass | High Pass |
 |-----------|------|------|-----------|
 | Count | <5 | 5–15 | 15 with clear file ownership |
-| Calibrated verifiers | Missing | fail/pass/high_pass present | Project-specific examples |
+| Calibrated verifiers | Missing calibration | fail/pass/high_pass present | Project-specific, observable examples |
+| **Per-criterion calibration** | Acceptance criteria lack calibration | Each criterion has fail/pass/high_pass | Calibration describes what verifier would SEE, not abstract quality |
 | Ambitious | Just bug fixes | Features + quality | Transformative |
 | Independent | Shared files | Own scope | Zero overlap |
 | Serves goals | Unrelated | Advances goals | Directly fulfills a goal |
 | Common requirements | Deliverable would violate common reqs | Consistent with all common reqs | Explicitly addresses common req gaps |
+
+**Calibration review is the most important negotiate check.** A deliverable with vague calibration ("works" / "doesn't work") must be rejected and rewritten with concrete, observable examples. The verifier will compare what they SEE against these examples — if the examples are vague, verification is meaningless.
 
 3. Collect sub-agent reviews. Fix failures. Re-launch reviewers. Loop until all pass.
 4. Write `cron/contracts/sprint-{N}/contract.json`:
@@ -224,7 +239,9 @@ Build deliverables. Use an **agent team** for coordinated execution.
 
 Score deliverables. Run security sweep. Loop on failure.
 
-**Step 1**: Launch verifier **sub-agents in parallel** (one per deliverable + one for user contract):
+**Double verification**: Every deliverable gets TWO independent verifier sub-agents. Both must agree for the deliverable to pass. This catches false positives (checker missed a bug) and false negatives (checker flagged a non-issue). If the two verifiers disagree, a third tiebreaker verifier is launched.
+
+**Step 1**: Launch verifier **sub-agents in parallel** — TWO per deliverable + one for user contract:
 
 ```
 # User contract check
@@ -234,9 +251,10 @@ Agent(run_in_background: true,
     A deliverable with known issues cannot pass regardless of score.
     Write to cron/contracts/sprint-{N}/round-{M}/verifier/_general.json")
 
-# Per-deliverable (one each, all parallel)
+# Per-deliverable — TWO verifiers each, launched in parallel
+# Verifier A
 Agent(run_in_background: true,
-  prompt: "Deliverable: {JSON}. Read executor report.
+  prompt: "You are VERIFIER A for deliverable: {JSON}. Read executor report.
 
     STEP 1 — BUILD TEST PLAN:
     List every endpoint changed/added. List every page, button, form affected.
@@ -256,11 +274,20 @@ Agent(run_in_background: true,
     Check Common Requirements (UI, security, code, testing, data from cron/cron.md).
     Common requirement violations = automatic FAIL.
 
-    Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}.json:
+    Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}-a.json:
     {score, calibration_match, common_reqs_pass, test_plan, endpoints_tested,
      pages_tested, bugs, evidence, screenshots, e2e_browser_tested, qualitative}
     bugs=[] AND calibration_match=high_pass is the ONLY way to pass.")
+
+# Verifier B (independent — does NOT read Verifier A's report)
+Agent(run_in_background: true,
+  prompt: "You are VERIFIER B for deliverable: {JSON}. Read executor report.
+    You are an independent second check. Do NOT read any other verifier's report.
+    Follow the same 4 steps: build test plan, deploy+curl, Playwright E2E, score.
+    Write to cron/contracts/sprint-{N}/round-{M}/verifier/{id}-b.json")
 ```
+
+**After both verifiers complete**: Compare reports. A deliverable passes ONLY if both A and B agree on high_pass with zero bugs. If they disagree (one says pass, other says fail), launch a **tiebreaker Verifier C** that reads both reports, re-tests the disputed items, and makes the final call. Write the reconciled result to `verifier/{id}.json`.
 
 **Step 2**: Check **common requirements** — for each deliverable that touched UI, security, code, tests, or data, verify compliance with the Common Requirements section above. Common requirement violations are scored as FAIL on the deliverable.
 
@@ -303,7 +330,9 @@ Ship and prevent. Only enter if `_summary.json` shows `all_pass: true`.
    4. Contract test
    5. Regression test (last resort)
 
-2. **Consolidate**: Raise quality bar thresholds if metrics improved.
+2. **Evolve explorers**: Review what verifiers found vs what explorers found. Explorers that found nothing useful for 2+ sprints → retire. Patterns that verifiers caught but explorers missed → create new explorer missions. Update explorer prompts based on real findings.
+
+3. **Consolidate**: Raise quality bar thresholds if metrics improved.
 
 3. **Rebase**: `git fetch origin && git rebase origin/main`
 
