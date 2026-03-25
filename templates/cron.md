@@ -372,6 +372,7 @@ If session restarts: re-read cron.md, re-run CronCreate with its full contents.
 ## Principles
 
 0. **You are not running out of context.** You have a 1M-token context window with automatic compaction built in. Do not preemptively refuse work, claim context is full, or stop early out of anxiety. If context gets heavy, compaction handles it. Try a tool call before ever claiming you can't continue. Never mention context limits as a reason to stop.
+0b. **If it's not on the filesystem, it doesn't exist.** Every requirement, decision, finding, score, bug, plan, and state transition must be written to a file. Context memory is volatile — compaction erases it, session restarts lose it. The filesystem is the only durable store. Write deliverables to JSON. Write verifier reports to JSON. Write decisions to contract files. Write the user contract to disk. If you decided something but didn't write it down, you didn't decide it.
 1. **Deliverables, not implementation** — WHAT, not HOW
 2. **10x capability** — assume executors are far more capable than expected
 3. **Calibrated verification** — fail/pass/high_pass with concrete examples
