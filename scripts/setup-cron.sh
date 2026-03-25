@@ -1,71 +1,65 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# setup-cron.sh — Create cron/ directory structure in a target project
+# setup-cron.sh — Create cron/ directory structure (contract-driven architecture)
 # Usage: ./setup-cron.sh [PROJECT_DIR]
-# Called by cron_setup.md during initial setup
 
 PROJECT_DIR="${1:-.}"
 TEMPLATE_DIR="$(cd "$(dirname "$0")/.." && pwd)/templates"
 
 if [[ -d "$PROJECT_DIR/cron/phases" ]]; then
   echo "⚠ cron/ already exists at $PROJECT_DIR/cron/ — skipping scaffold"
-  echo "  Use cron_setup.md migration flow instead"
   exit 0
 fi
 
 echo "Creating cron/ structure at $PROJECT_DIR/cron/"
 
-# Directory structure — 3 phases: plan, execute, reflect
-mkdir -p "$PROJECT_DIR/cron"/{phases/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},protocols,watchdog,logs/rounds}
+# Directory structure — 4 phases: plan, generate, verify, reflect
+mkdir -p "$PROJECT_DIR/cron"/{phases/explorers/{e1-harness,e2-stress,e3-codebase,e4-infra,_retired},protocols,logs/rounds}
 
-# Copy 100% generic files verbatim
-cp "$TEMPLATE_DIR/finding-schema.ts"        "$PROJECT_DIR/cron/"
-cp "$TEMPLATE_DIR/cron_create_reminder.md"  "$PROJECT_DIR/cron/"
-cp "$TEMPLATE_DIR/explorers/_defaults.md"   "$PROJECT_DIR/cron/phases/explorers/"
-cp "$TEMPLATE_DIR/explorers/discovery-swarm.md"  "$PROJECT_DIR/cron/phases/explorers/"
+# Core files
+cp "$TEMPLATE_DIR/finding-schema.ts" "$PROJECT_DIR/cron/"
 
-# Seed explorer mission.md files from templates (agents customize later)
+# Explorer defaults + swarm
+cp "$TEMPLATE_DIR/explorers/_defaults.md" "$PROJECT_DIR/cron/phases/explorers/"
+cp "$TEMPLATE_DIR/explorers/discovery-swarm.md" "$PROJECT_DIR/cron/phases/explorers/"
+
+# Seed explorer missions
 for edir in e1-harness e2-stress e3-codebase e4-infra; do
   tmpl="$TEMPLATE_DIR/explorers/$edir/mission.md.tmpl"
   dest="$PROJECT_DIR/cron/phases/explorers/$edir/mission.md"
   if [[ -f "$tmpl" && ! -f "$dest" ]]; then
     cp "$tmpl" "$dest"
-    echo "  Seeded $edir/mission.md from template (customize placeholders)"
+    echo "  Seeded $edir/mission.md"
   fi
 done
 
-# Generic phase files
-cp "$TEMPLATE_DIR/phases/plan.md"     "$PROJECT_DIR/cron/phases/"
-cp "$TEMPLATE_DIR/phases/execute.md"  "$PROJECT_DIR/cron/phases/"
-cp "$TEMPLATE_DIR/phases/reflect.md"  "$PROJECT_DIR/cron/phases/"
+# Phase files (plan, generate, verify, reflect)
+for phase in plan generate verify reflect; do
+  cp "$TEMPLATE_DIR/phases/$phase.md" "$PROJECT_DIR/cron/phases/"
+done
 
-# Generic protocols
-cp "$TEMPLATE_DIR/protocols/user-prompt-reaction.md"       "$PROJECT_DIR/cron/protocols/"
-cp "$TEMPLATE_DIR/protocols/escalation.md"                 "$PROJECT_DIR/cron/protocols/"
-cp "$TEMPLATE_DIR/protocols/bug-regression-prevention.md"  "$PROJECT_DIR/cron/protocols/"
+# Protocols
+cp "$TEMPLATE_DIR/protocols/user-prompt-reaction.md" "$PROJECT_DIR/cron/protocols/"
+cp "$TEMPLATE_DIR/protocols/escalation.md" "$PROJECT_DIR/cron/protocols/"
+cp "$TEMPLATE_DIR/protocols/bug-regression-prevention.md" "$PROJECT_DIR/cron/protocols/"
 
-# Watchdog scripts
-cp "$TEMPLATE_DIR/../scripts/watchdog.sh"  "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
-chmod +x "$PROJECT_DIR/cron/watchdog/cron-watchdog.sh"
+# Initialize state
+cat > "$PROJECT_DIR/cron/state.json" << 'EOF'
+{"sprint": 1, "round": 0, "mode": "plan"}
+EOF
 
-# Watchdog hook
-cp "$TEMPLATE_DIR/watchdog/on-session-start.sh" "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
-chmod +x "$PROJECT_DIR/cron/watchdog/on-session-start.sh"
-
-# Seed REVIEW.md at project root if it doesn't exist
+# REVIEW.md at project root
 if [[ ! -f "$PROJECT_DIR/REVIEW.md" ]]; then
   cp "$TEMPLATE_DIR/REVIEW.md.tmpl" "$PROJECT_DIR/REVIEW.md"
-  echo "  Seeded REVIEW.md (customize semantic lint rules for your project)"
+  echo "  Seeded REVIEW.md"
 fi
 
-# Initialize empty log
+# Initialize log
 touch "$PROJECT_DIR/cron/logs/summary.jsonl"
 
-echo "✓ cron/ structure created at $PROJECT_DIR/cron/"
-echo "  Directories: $(find "$PROJECT_DIR/cron" -type d | wc -l | tr -d ' ')"
-echo "  Files copied: $(find "$PROJECT_DIR/cron" -type f | wc -l | tr -d ' ')"
+echo "✓ cron/ created at $PROJECT_DIR/cron/"
+echo "  Files: $(find "$PROJECT_DIR/cron" -type f | wc -l | tr -d ' ')"
 echo ""
-echo "  Next: Claude will generate project-specific files:"
-echo "    vision.md, constitution.md, config.json,"
-echo "    cron.env, explorer missions, deploy protocol"
+echo "  Next: Claude generates project-specific files:"
+echo "    user-contract.md, constitution.md, vision.md, tick-contract.md"

@@ -1,0 +1,42 @@
+# User Contract — {{PROJECT_NAME}}
+
+> This contract defines what the product MUST be. The cron system can optimize on top of this, but can never weaken it. Written by the operator. Verified EVERY tick.
+
+## Goals
+
+{{What is this product trying to become? Who does it serve? 2-3 sentences.}}
+
+## Features That Must Work
+
+{{List of features that must always function. Checkboxes.}}
+- [ ] Feature 1
+- [ ] Feature 2
+
+## User Journeys (must never break)
+
+{{End-to-end flows. If any breaks, it's a P0.}}
+1. User does X → system responds with Y
+2. User does A → system responds with B
+
+## Quality Bar (ALWAYS enforced)
+
+{{Standards that hold on every tick. Non-negotiable.}}
+- [ ] All tests pass
+- [ ] No type errors
+- [ ] Production responds
+
+## General Verifiers (run EVERY tick — hard gates)
+
+```bash
+{{COMPILE_COMMAND}}    # Types clean
+{{TEST_COMMAND}}       # All tests pass
+{{HEALTH_CHECK}}       # Production alive
+```
+
+## Directional Verifiers (thresholds that shift upward)
+
+```bash
+# Test count: must be > {{CURRENT_TEST_COUNT}}
+# Type holes: must be < {{CURRENT_ANY_COUNT}}
+# Shift these thresholds up after each sprint
+```
